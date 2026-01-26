@@ -1,8 +1,12 @@
 import React, { useContext, useState } from "react";
 import { NavLink, Link, useLocation } from "react-router";
-import { motion as Motion } from "motion/react";
+import { motion as Motion } from "framer-motion";
 import {
- Menu, X, Moon, Sun, LogOut, Leaf
+  Menu,
+  X,
+  LogOut,
+  Leaf,
+  User,
 } from "lucide-react";
 import MyContainer from "./MyContainer";
 import { AuthContext } from "../context/AuthContext";
@@ -26,42 +30,62 @@ const Navbar = () => {
       .catch((e) => toast.error(e.message));
   };
 
+  // 🔹 Nav configs
+  const authNavLinks = [
+    { name: "Home", path: "/" },
+    { name: "All Issues", path: "/issues" },
+    { name: "Add Issue", path: "/add-issue" },
+    { name: "My Issues", path: "/my-issues" },
+    { name: "My Contribution", path: "/my-contribution" },
+  ];
+
+  const guestNavLinks = [
+    { name: "Home", path: "/" },
+    { name: "Issues", path: "/issues" },
+  ];
+
   return (
     <Motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
+      transition={{ duration: 0.4 }}
       className="glass sticky top-0 z-50 border-b border-cyan-500/20"
     >
       <MyContainer>
         <div className="flex items-center justify-between h-16">
 
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center gap-2">
             <Leaf className="h-8 w-8 text-green-600 dark:text-green-500" />
-            <span className="font-bold text-xl text-gray-900 dark:text-white">EcoReport</span>
+            <span className="font-bold text-xl text-gray-900 dark:text-white">
+              EcoReport
+            </span>
           </Link>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-6">
-            <NavLink
-              to="/"
-              className={`text-sm ${isActive("/") ? "text-cyan-400" : "text-gray-300 hover:text-cyan-400"}`}
-            >
-              Home
-            </NavLink>
-
-            <NavLink
-              to="/all-games"
-              className={`text-sm ${isActive("/all-games") ? "text-cyan-400" : "text-gray-300 hover:text-cyan-400"}`}
-            >
-             Issues
-            </NavLink>
+            {(user ? authNavLinks : guestNavLinks).map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={`text-sm ${
+                  isActive(item.path)
+                    ? "text-cyan-400"
+                    : "text-gray-300 hover:text-cyan-400"
+                }`}
+              >
+                {item.name}
+              </NavLink>
+            ))}
 
             {loading ? (
               <PacmanLoader color="#ab9fe9" size={15} />
             ) : !user ? (
               <>
-                <NavLink to="/login" className="text-gray-300 hover:text-cyan-400">
+                <NavLink
+                  to="/login"
+                  className="text-gray-300 hover:text-cyan-400"
+                >
                   Login
                 </NavLink>
                 <NavLink
@@ -85,7 +109,10 @@ const Navbar = () => {
                   )}
                 </NavLink>
 
-                <button onClick={logout} className="flex items-center gap-2 text-gray-300 hover:text-pink-400">
+                <button
+                  onClick={logout}
+                  className="flex items-center gap-2 text-gray-300 hover:text-pink-400"
+                >
                   <LogOut className="w-4 h-4" />
                   Logout
                 </button>
@@ -93,22 +120,28 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile Right Side */}
+          {/* Mobile Right */}
           <div className="md:hidden flex items-center gap-3">
-
             {!user && !loading && (
               <>
                 <Link to="/login" className="text-sm text-cyan-400">
                   Login
                 </Link>
-                <Link to="/register" className="text-sm px-3 py-1 cyber-button rounded-md">
+                <Link
+                  to="/register"
+                  className="text-sm px-3 py-1 cyber-button rounded-md"
+                >
                   Register
                 </Link>
               </>
             )}
 
             <button onClick={() => setOpen(!open)}>
-              {open ? <X className="w-6 h-6 text-white" /> : <Menu className="w-6 h-6 text-white" />}
+              {open ? (
+                <X className="w-6 h-6 text-white" />
+              ) : (
+                <Menu className="w-6 h-6 text-white" />
+              )}
             </button>
           </div>
         </div>
@@ -120,23 +153,36 @@ const Navbar = () => {
             animate={{ opacity: 1, y: 0 }}
             className="md:hidden mt-4 glass-card rounded-xl p-4 space-y-4"
           >
-            <NavLink onClick={() => setOpen(false)} to="/" className="block text-gray-300">
-              Home
-            </NavLink>
+            {(user ? authNavLinks : guestNavLinks).map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                onClick={() => setOpen(false)}
+                className="block text-gray-300"
+              >
+                {item.name}
+              </NavLink>
+            ))}
 
-            <NavLink onClick={() => setOpen(false)} to="/all-games" className="block text-gray-300">
-              All Games
-            </NavLink>
-
-            {user && (
+            {user ? (
+              <button
+                onClick={logout}
+                className="flex items-center gap-2 text-pink-400"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
+              </button>
+            ) : (
               <>
-                <NavLink onClick={() => setOpen(false)} to="/profile" className="block text-gray-300">
-                  Profile
+                <NavLink to="/login" className="block text-cyan-400">
+                  Login
                 </NavLink>
-                <button onClick={logout} className="flex items-center gap-2 text-pink-400">
-                  <LogOut className="w-4 h-4" />
-                  Logout
-                </button>
+                <NavLink
+                  to="/register"
+                  className="block cyber-button text-center rounded-md py-2"
+                >
+                  Register
+                </NavLink>
               </>
             )}
           </Motion.div>
