@@ -1,14 +1,14 @@
 import React, { useContext, useState } from "react";
 import { motion as Motion } from "motion/react";
 import { Link, useNavigate } from "react-router";
-import {Eye,Mail,Lock,User,Image,Sparkles, EyeOff} from "lucide-react";
+import {Eye,Mail,Lock,User,Image,Leaf, EyeOff} from "lucide-react";
 
 import {  } from "../firebase/Firebase.Config";
 import { toast } from "react-toastify";
 import { AuthContext } from "../context/AuthContext";
 
 const Register = () => {
-  const { createUserWithEmailAndPasswordFunc, updateProfileFunc, sendEmailVerificationFunc,
+  const { createUserWithEmailAndPasswordFunc, updateProfileFunc, 
     signOutFunc,
     setUser
   } = useContext(AuthContext)
@@ -45,17 +45,16 @@ const Register = () => {
   
       ).then(() => {
 
-     // email verification   
-        sendEmailVerificationFunc().then(res => {
+    
    console.log(res);
         
            signOutFunc().then(() => {
-                   toast.success("registration successfull. Check your spam-mail to active the account")
+                   toast.success("registration successfull.")
              setUser(null)
              navigate('/login')
                 })
 
-        }).catch((e) => {
+        .catch((e) => {
         toast.error(e.message)
       })
 })
@@ -71,80 +70,116 @@ const Register = () => {
       })
    }
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 grid-background flex items-center justify-center px-4 py-12">
-      <Motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-md relative"
-      >
-        <div className="absolute -inset-1 bg-linear-to-r from-cyan-500 to-pink-500 rounded-2xl blur-xl opacity-20" />
-
-        <div className="relative glass-card rounded-2xl p-8 border border-cyan-500/30">
-          
-          
-          <Motion.div
-            className="flex items-center justify-center gap-2 mb-6"
-            animate={{ rotate: [0, -5, 5, 0] }}
-            transition={{ duration: 3, repeat: Infinity }}
-          >
-            <Sparkles className="w-8 h-8 text-pink-400" />
-          </Motion.div>
-
-          <h2 className="text-3xl gradient-text font-bold mb-6 text-center">
-            Join GameHub
-          </h2>
-
-        
+     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 bg-gray-50 dark:bg-gray-900">
+      <div className="card w-full max-w-md">
+        <div className="card-header flex flex-col items-center text-center">
+          <div className="flex justify-center mb-4">
+            <Leaf className="h-12 w-12 text-green-600 dark:text-green-500" />
+          </div>
+          <h2 className="card-title text-2xl">Create an Account</h2>
+          <p className="card-description">Join EcoReport and make a difference</p>
+        </div>
+        <div className="card-content">
           <form onSubmit={handelSignup} className="space-y-4">
-                          <label htmlFor="name" className="block text-gray-300 mb-2 font-medium">Name</label>
-          <input type="text" name="name" className="w-full pl-12 pr-4 py-3 glass-card text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all"
-                  placeholder="John Doe"
-              required />
-                          <label htmlFor="photoURL" className="block text-gray-300 mb-2 font-medium">Photo URL</label>
-          <input type="text" name="photo" className="w-full pl-12 pr-4 py-3 glass-card text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all"
-              placeholder="https://example.com/photo.jpg" required />
-            <label htmlFor="email" className="block text-gray-300 mb-2 font-medium">Email</label>
-          <input type="email" name="email"  className="w-full pl-12 pr-4 py-3 glass-card text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all"
-                  placeholder="your@email.com" required />
-            <div className="relative group">
-               <label htmlFor="password" className="block text-gray-300 mb-2 font-medium">Password</label>
-            <input
-              type= {show ? "text" :"password"}
-              name="password"
-              className="w-full pl-12 pr-12 py-3 glass-card text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all"
-                  placeholder="••••••••"
-              required
-              />
-               <button
+            <div className="space-y-2">
+              <label htmlFor="name" className="label">Name *</label>
+              <div className="relative">
+               
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  placeholder="Enter your name"
+                  
+                  
+                  className="input pl-10"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="email" className="label">Email *</label>
+              <div className="relative">
+               
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  
+                  className="input pl-10"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="photoURL" className="label">Photo URL (Optional)</label>
+              <div className="relative">
+                
+                <input
+                  id="photoURL"
+                  name="photo"
+                  type="text"
+                  placeholder="Enter photo URL"
+                 
+                  className="input pl-10"
+                  required
+                 
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="password" className="label">Password *</label>
+              <div className="relative">
+                
+                <input
+                  id="password"
+                  name="password"
+                  type= {show ? "text" :"password"}
+                  placeholder="Enter your password"
+                 
+                  className="input pl-10"
+                  required
+                />
+                <button
                   type="button"
                   onClick={()=> setShow(!show)}
                   className="absolute right-4 top-1/2 z-50 text-gray-500 hover:text-cyan-400 transition-colors"
                 >
                   {show ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
                 </button>
-            
-          </div>
-          <button  type="submit"
-              className="w-full cyber-button py-3 text-white rounded-xl font-medium">Register</button>
-     
-       
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Password must contain uppercase, lowercase, and be at least 6 characters
+              </p>
+            </div>
 
-         
-        
+            <button type="submit" className="btn btn-primary w-full" >
+              Register
+            </button>
 
-          
-          <p className="mt-6 text-center text-gray-400">
-            Already have an account?{" "}
-            <Link
-              to="/login"
-              className="text-cyan-400 hover:text-pink-400 font-medium"
-            >
-              Login here
-            </Link>
+            <div className="relative my-4">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+               
+              </div>
+            </div>
+
+           
+            <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-4">
+              Already have an account?{' '}
+              <Link to="/login" className="text-green-600 dark:text-green-500 hover:underline">
+                Login
+              </Link>
             </p>
-             </form>
+          </form>
         </div>
-      </Motion.div>
+      </div>
     </div>
   );
 };

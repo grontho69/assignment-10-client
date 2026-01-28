@@ -62,7 +62,7 @@ const navigate = useNavigate()
     <div className="min-h-screen flex items-center justify-center py-12 px-4 bg-gray-50 dark:bg-gray-900">
       
       <div className="card w-full max-w-md">
-        <div className="card-header text-center">
+        <div className="card-header items-center flex flex-col text-center">
           <div className="flex justify-center mb-4">
             <Leaf className="h-12 w-12 text-green-600 dark:text-green-500" />
           </div>
@@ -88,7 +88,7 @@ const navigate = useNavigate()
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="relative space-y-2">
               <label htmlFor="password" className="label">Password</label>
               <div className="relative">
                 
@@ -97,10 +97,17 @@ const navigate = useNavigate()
                  type= {show ? "text" :"password"}
                   placeholder="Enter your password"
                   
-                  
+                  required
                   className="input pl-10"
                   
                 />
+                 <button
+                         type="button"
+                         onClick={()=> setShow(!show)}
+                         className="absolute right-4 top-1/2 z-50 text-gray-500 hover:text-cyan-400 transition-colors"
+                       >
+                         {show ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                       </button>
               </div>
             </div>
 
