@@ -10,6 +10,7 @@ import Login from "../Pages/Login";
 import Register from "../Pages/Register";
 import AllIssues from "../Pages/AllIssues";
 import AddIssues from "../Pages/AddIssues";
+import IssueDetails from "../Pages/IssueDetails";
 
 
 
@@ -44,6 +45,12 @@ export const router = createBrowserRouter([
       {
         path: '/add-issue',
         element:<AddIssues/>
+      },
+      {
+        path: '/issue-details/:id',
+        element:<IssueDetails/>,
+        loader:({params})=> fetch(`http://localhost:3000/issues/${params.id}`)
+        
       }
       
 

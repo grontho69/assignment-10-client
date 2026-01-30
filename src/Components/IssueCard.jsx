@@ -36,7 +36,7 @@ const IssueCard = ({ issue }) => {
           </span>
         </div>
 
-        <Link to={`/issues/${issue.id}`}>
+        <Link to={`/issue-details/${issue._id}`}>
           <button className="btn btn-primary w-full">
             See Details
           </button>
