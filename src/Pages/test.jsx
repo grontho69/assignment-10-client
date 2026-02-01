@@ -1,19 +1,24 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { MapPin, Calendar, DollarSign, User, Loader2, X } from 'lucide-react';
 import { useLoaderData } from 'react-router';
-import { AuthContext } from '../context/AuthContext';
-import { toast } from 'react-toastify';
+import toast, { Toaster } from 'react-hot-toast'; // Ensure you have react-hot-toast installed
+
+// MOCK USER - Replace this with your actual Auth Context (e.g. const { user } = useAuth())
+const user = {
+    email: "user@example.com",
+    displayName: "John Doe",
+    photoURL: "https://ui-avatars.com/api/?name=John+Doe"
+};
 
 const IssueDetails = () => {
-    const { user } = useContext(AuthContext);
-    const data = useLoaderData()
-    const issue = data.result
+    const data = useLoaderData();
+    const issue = data.result;
 
     const [showModal, setShowModal] = useState(false);
     const [contributions, setContributions] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    
+    // 1. Fetch Contributions when component mounts
     useEffect(() => {
         if (issue?._id) {
             fetch(`http://localhost:3000/contributions?issueId=${issue._id}`)
@@ -23,10 +28,11 @@ const IssueDetails = () => {
         }
     }, [issue]);
 
-    
+    // 2. Calculate Progress
     const totalRaised = contributions.reduce((acc, curr) => acc + Number(curr.amount), 0);
-    const progressPercentage = Math.min((totalRaised / (issue.amount || 1)) * 100, 100);
+    const progressPercentage = Math.min((totalRaised / issue.amount) * 100, 100);
 
+    // 3. Handle Form Submission
     const handleContributionSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
@@ -36,8 +42,8 @@ const IssueDetails = () => {
             issueId: issue._id,
             issueTitle: issue.title,
             contributorName: form.contributorName.value,
-            contributorEmail: user?.email,
-            contributorImage: user?.photoURL || '',
+            contributorEmail: user.email, // Using logged in user email
+            contributorImage: user.photoURL,
             phoneNumber: form.phone.value,
             address: form.address.value,
             amount: form.contributionAmount.value,
@@ -47,7 +53,9 @@ const IssueDetails = () => {
         try {
             const response = await fetch('http://localhost:3000/contributions', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify(contributionData),
             });
 
@@ -55,6 +63,7 @@ const IssueDetails = () => {
 
             if (result._id) {
                 toast.success('Contribution successful!');
+                // Update UI immediately without refreshing
                 setContributions([result, ...contributions]);
                 setShowModal(false);
                 form.reset();
@@ -69,25 +78,28 @@ const IssueDetails = () => {
 
     return (
         <div>
+            {/* Toaster for notifications */}
+            <Toaster />
+            
             <div className="container mx-auto px-4 py-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* main content */}
+                    {/* Main Content */}
                     <div className="lg:col-span-2 space-y-6">
-                        <div className="card">
-                            <div className="h-96 overflow-hidden">
+                        <div className="card bg-base-100 shadow-xl">
+                            <figure className="h-96 overflow-hidden">
                                 <img
                                     src={issue.image}
                                     alt={issue.title}
                                     className="w-full h-full object-cover"
                                 />
-                            </div>
-                            <div className="card-content">
+                            </figure>
+                            <div className="card-body">
                                 <div className="mb-4">
-                                    <span className="badge badge-success text-sm">
+                                    <span className="badge badge-success text-sm text-white">
                                         {issue.category}
                                     </span>
                                 </div>
-                                <h1 className="text-3xl mb-4 text-gray-900 dark:text-white">{issue.title}</h1>
+                                <h1 className="text-3xl mb-4 text-gray-900 dark:text-white font-bold">{issue.title}</h1>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                                     <div className="flex items-center text-gray-600 dark:text-gray-400">
@@ -96,7 +108,7 @@ const IssueDetails = () => {
                                     </div>
                                     <div className="flex items-center text-gray-600 dark:text-gray-400">
                                         <Calendar className="h-5 w-5 mr-2" />
-                                        {new Date(issue.date).toLocaleDateString()}
+                                        {new Date(issue.date || Date.now()).toLocaleDateString()}
                                     </div>
                                     <div className="flex items-center text-gray-600 dark:text-gray-400">
                                         <DollarSign className="h-5 w-5 mr-2" />
@@ -104,23 +116,23 @@ const IssueDetails = () => {
                                     </div>
                                     <div className="flex items-center text-gray-600 dark:text-gray-400">
                                         <User className="h-5 w-5 mr-2" />
-                                        {issue.email}
+                                        {issue.email || "Organizer"}
                                     </div>
                                 </div>
 
                                 <div>
-                                    <h3 className="text-xl mb-2 text-gray-900 dark:text-white">Description</h3>
+                                    <h3 className="text-xl mb-2 text-gray-900 dark:text-white font-semibold">Description</h3>
                                     <p className="text-gray-600 dark:text-gray-400">{issue.description}</p>
                                 </div>
                             </div>
                         </div>
 
-                        {/* contributors Table */}
-                        <div className="card">
-                            <div className="card-content">
-                                <h3 className="text-xl mb-4 text-gray-900 dark:text-white">Contributors</h3>
-                                <div className="table-container">
-                                    <table className="table">
+                        {/* Contributors Table */}
+                        <div className="card bg-base-100 shadow-xl">
+                            <div className="card-body">
+                                <h3 className="text-xl mb-4 text-gray-900 dark:text-white font-bold">Contributors</h3>
+                                <div className="overflow-x-auto">
+                                    <table className="table w-full">
                                         <thead>
                                             <tr>
                                                 <th>Contributor</th>
@@ -129,42 +141,50 @@ const IssueDetails = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {contributions.map((contrib) => (
-                                                <tr key={contrib._id}>
-                                                    <td>
-                                                        <div className="flex items-center">
-                                                            <div className="avatar mr-2">
-                                                                <div className="avatar-fallback overflow-hidden">
-                                                                    <img src={contrib.contributorImage || "https://via.placeholder.com/40"} alt="" />
+                                            {contributions.length > 0 ? (
+                                                contributions.map((contrib) => (
+                                                    <tr key={contrib._id}>
+                                                        <td>
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="avatar">
+                                                                    <div className="mask mask-squircle w-10 h-10">
+                                                                        <img src={contrib.contributorImage} alt={contrib.contributorName} />
+                                                                    </div>
+                                                                </div>
+                                                                <div>
+                                                                    <div className="font-bold">{contrib.contributorName}</div>
+                                                                    <div className="text-sm opacity-50">{contrib.contributorEmail}</div>
                                                                 </div>
                                                             </div>
-                                                            <span>{contrib.contributorName}</span>
-                                                        </div>
-                                                    </td>
-                                                    <td className="text-green-600 font-semibold">${contrib.amount}</td>
-                                                    <td>{new Date(contrib.createdAt).toLocaleDateString()}</td>
+                                                        </td>
+                                                        <td className="text-green-600 font-bold">${contrib.amount}</td>
+                                                        <td>{new Date(contrib.createdAt).toLocaleDateString()}</td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan="3" className="text-center py-4">No contributions yet. Be the first!</td>
                                                 </tr>
-                                            ))}
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
+
                     </div>
 
-                    {/* sidebar */}
+                    {/* Sidebar */}
                     <div className="space-y-6">
-                        <div className="card">
-                            <div className="card-content">
-                                <h3 className="text-xl mb-4 text-gray-900 dark:text-white">Contribution Progress</h3>
+                        <div className="card bg-base-100 shadow-xl">
+                            <div className="card-body">
+                                <h3 className="text-xl mb-4 text-gray-900 dark:text-white font-bold">Contribution Progress</h3>
                                 <div className="mb-4">
                                     <div className="flex justify-between text-sm mb-2">
                                         <span className="text-gray-600 dark:text-gray-400">Total Raised</span>
-                                        <span className="text-green-600 font-semibold">${totalRaised}</span>
+                                        <span className="text-green-600 font-bold">${totalRaised}</span>
                                     </div>
-                                    <div className="progress">
-                                        <div className="progress-bar" style={{ width: `${progressPercentage}%` }}></div>
-                                    </div>
+                                    <progress className="progress progress-success w-full" value={progressPercentage} max="100"></progress>
                                     <div className="flex justify-between text-xs mt-2 text-gray-500">
                                         <span>{Math.round(progressPercentage)}% of goal</span>
                                         <span>Goal: ${issue.amount}</span>
@@ -179,73 +199,74 @@ const IssueDetails = () => {
                     </div>
                 </div>
 
-                {/* contribution modal */}
+                {/* Contribution Modal */}
                 {showModal && (
-                    <div className="dialog-overlay" onClick={() => setShowModal(false)}>
-                        <div className="dialog" onClick={(e) => e.stopPropagation()}>
-                            <div className="dialog-header">
-                                <div className="flex items-center justify-between">
-                                    <h3 className="dialog-title">Make a Contribution</h3>
-                                    <button
-                                        onClick={() => setShowModal(false)}
-                                        className="btn btn-ghost btn-sm p-1"
-                                    >
-                                        <X className="h-5 w-5" />
-                                    </button>
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={() => setShowModal(false)}>
+                        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                            <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center sticky top-0 bg-white dark:bg-gray-800 z-10">
+                                <div>
+                                    <h3 className="text-lg font-bold">Make a Contribution</h3>
+                                    <p className="text-sm text-gray-500">Enter your details to contribute to this issue.</p>
                                 </div>
-                                <p className="dialog-description">Enter your details to contribute to this issue.</p>
+                                <button
+                                    onClick={() => setShowModal(false)}
+                                    className="btn btn-ghost btn-sm btn-circle"
+                                >
+                                    <X className="h-5 w-5" />
+                                </button>
                             </div>
-                            <div className="dialog-content">
+                            
+                            <div className="p-6">
                                 <form onSubmit={handleContributionSubmit} className="space-y-4">
-                                    <div className="space-y-2">
+                                    <div className="form-control">
                                         <label className="label">Issue Title</label>
-                                        <input className="input" value={issue.title} disabled />
+                                        <input className="input input-bordered w-full bg-gray-100" value={issue.title} disabled />
                                     </div>
 
-                                    <div className="space-y-2">
+                                    <div className="form-control">
                                         <label htmlFor="contributorName" className="label">Name *</label>
                                         <input
                                             id="contributorName"
                                             name="contributorName"
-                                            className="input"
-                                            defaultValue={user?.displayName || ''}
+                                            className="input input-bordered w-full"
+                                            defaultValue={user.displayName}
                                             required
                                         />
                                     </div>
 
-                                    <div className="space-y-2">
+                                    <div className="form-control">
                                         <label htmlFor="contributorEmail" className="label">Email *</label>
                                         <input
                                             id="contributorEmail"
                                             type="email"
-                                            className="input"
-                                            value={user?.email || ''}
+                                            className="input input-bordered w-full bg-gray-100"
+                                            value={user.email}
                                             disabled
                                         />
                                     </div>
 
-                                    <div className="space-y-2">
+                                    <div className="form-control">
                                         <label htmlFor="phone" className="label">Phone Number *</label>
                                         <input
                                             id="phone"
                                             name="phone"
                                             type="tel"
-                                            className="input"
+                                            className="input input-bordered w-full"
                                             required
                                         />
                                     </div>
 
-                                    <div className="space-y-2">
+                                    <div className="form-control">
                                         <label htmlFor="address" className="label">Address *</label>
                                         <input
                                             id="address"
                                             name="address"
-                                            className="input"
+                                            className="input input-bordered w-full"
                                             required
                                         />
                                     </div>
 
-                                    <div className="space-y-2">
+                                    <div className="form-control">
                                         <label htmlFor="contributionAmount" className="label">Amount ($) *</label>
                                         <input
                                             id="contributionAmount"
@@ -253,25 +274,24 @@ const IssueDetails = () => {
                                             type="number"
                                             min="1"
                                             step="1"
-                                            className="input"
+                                            className="input input-bordered w-full"
                                             required
                                         />
                                     </div>
 
-                                    <div className="space-y-2">
+                                    <div className="form-control">
                                         <label htmlFor="additionalInfo" className="label">Additional Information</label>
                                         <textarea
                                             id="additionalInfo"
                                             name="additionalInfo"
-                                            className="textarea"
+                                            className="textarea textarea-bordered w-full"
                                             placeholder="Any additional notes (optional)"
                                             rows={3}
                                         />
                                     </div>
 
                                     <button type="submit" className="btn btn-primary w-full" disabled={isSubmitting}>
-                                        {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                        {isSubmitting ? 'Submitting...' : 'Submit Contribution'}
+                                        {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Submit Contribution'}
                                     </button>
                                 </form>
                             </div>
