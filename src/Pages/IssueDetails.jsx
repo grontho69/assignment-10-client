@@ -1,17 +1,35 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { MapPin, Calendar, DollarSign, User, Loader2, X } from 'lucide-react';
-import { useLoaderData } from 'react-router';
+import {  useParams } from 'react-router';
 import { AuthContext } from '../context/AuthContext';
 import { toast } from 'react-toastify';
+import { RotateLoader } from 'react-spinners';
 
 const IssueDetails = () => {
     const { user } = useContext(AuthContext);
-    const data = useLoaderData()
-    const issue = data.result
-
     const [showModal, setShowModal] = useState(false);
     const [contributions, setContributions] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const { id } = useParams()
+    const [issue, setIssue] = useState({})
+    const [loading,setLoading]= useState(true)
+
+    useEffect(() => {
+        fetch(`http://localhost:3000/issues/${id}`, {
+          headers: {
+            authorization:`Bearer ${user.accessToken}`
+           }
+        })
+        .then(res=>res.json())
+            .then(data => {
+                console.log(data)
+                setIssue(data.result)
+                setLoading(false)
+        })
+    },[])
+
+
+
 
     
     useEffect(() => {
@@ -66,6 +84,15 @@ const IssueDetails = () => {
             setIsSubmitting(false);
         }
     }
+
+     if (loading) {
+       return <div className='h-[97vh] flex items-center justify-center'>
+       <RotateLoader
+     color="#54b355"
+     size={25}
+   />
+     </div>
+   }
 
     return (
         <div>

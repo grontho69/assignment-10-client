@@ -11,6 +11,9 @@ import Register from "../Pages/Register";
 import AllIssues from "../Pages/AllIssues";
 import AddIssues from "../Pages/AddIssues";
 import IssueDetails from "../Pages/IssueDetails";
+import MyIssues from "../Pages/MyIssues";
+import MyContribution from "../Pages/MyContribution";
+import PrivateRouts from "../Private/PrivateRouts";
 
 
 
@@ -24,7 +27,7 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <Home />,
-        
+        loader:()=> fetch('http://localhost:3000/recent-issues')
       },
      
       {
@@ -39,19 +42,46 @@ export const router = createBrowserRouter([
       },
       {
         path: '/issues',
-        element: <AllIssues />,
+         element: (
+          <PrivateRouts>
+            <AllIssues/>
+          </PrivateRouts>
+        ),
         loader:()=> fetch('http://localhost:3000/issues')
       },
       {
         path: '/add-issue',
-        element:<AddIssues/>
+        element: (
+          <PrivateRouts>
+            <AddIssues/>
+          </PrivateRouts>
+        ),
       },
       {
         path: '/issue-details/:id',
-        element:<IssueDetails/>,
-         loader:({params})=> fetch(`http://localhost:3000/issues/${params.id}`)
+        element: (
+          <PrivateRouts>
+            <IssueDetails/>
+          </PrivateRouts>
+        ),
+       
   },
-        
+      {
+        path: '/my-issues',
+         element: (
+          <PrivateRouts>
+            <MyIssues/>
+          </PrivateRouts>
+        ),
+      },
+      {
+        path: '/my-contribution',
+         element: (
+          <PrivateRouts>
+            <MyContribution/>
+          </PrivateRouts>
+        ),
+      }
       
       
 

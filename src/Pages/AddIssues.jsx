@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import { AuthContext } from '../context/AuthContext'
+import { toast } from 'react-toastify'
 
 const AddIssues = () => {
 const {user} = useContext(AuthContext)
@@ -27,6 +28,7 @@ const {user} = useContext(AuthContext)
     })
       .then(res => res.json())
       .then(data => {
+        toast.success('Issue reported successfully')
       console.log(data)
       })
       .catch(err => {

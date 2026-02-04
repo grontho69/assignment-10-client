@@ -4,7 +4,8 @@ import { Typewriter } from 'react-simple-typewriter';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { Link } from 'react-router';
+import { Link, useLoaderData } from 'react-router';
+import IssueCard from '../Components/IssueCard';
 
 
 const categories = [
@@ -38,6 +39,9 @@ const categories = [
   }
 ];
 const Home = () => {
+
+const recentIssues = useLoaderData()
+
    const sliderSettings = {
     dots: true,
     infinite: true,
@@ -112,6 +116,10 @@ const Home = () => {
         </Slider>
       </section>
 
+
+
+
+
             {/* Category Section */}
       <section className="py-16 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto px-4">
@@ -137,6 +145,29 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+{/* Recent Issues */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl mb-4 text-gray-900 dark:text-white">Recent Complaints</h2>
+            <p className="text-gray-600 dark:text-gray-400">Latest issues reported by the community</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {recentIssues.map(issue => (
+            <IssueCard key={issue.id} issue={issue} />
+          ))}
+        </div>
+          <div className="text-center mt-8">
+            <Link to="/issues">
+              <button className="btn btn-lg btn-outline">
+                View All Issues
+              </button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
 
        {/* CTA Section */}
       <section className="py-16 bg-gray-50 dark:bg-gray-800">
