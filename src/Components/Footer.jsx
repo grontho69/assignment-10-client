@@ -7,7 +7,7 @@ const Footer = () => {
     <footer className="bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-auto">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* About Section */}
+         
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <Leaf className="h-6 w-6 text-green-600 dark:text-green-500" />
@@ -18,7 +18,7 @@ const Footer = () => {
             </p>
           </div>
 
-          {/* Quick Links */}
+         
           <div>
             <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Quick Links</h3>
             <ul className="space-y-2">
@@ -45,7 +45,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Categories */}
+          
           <div>
             <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Issue Categories</h3>
             <ul className="space-y-2">
@@ -56,7 +56,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Contact */}
+        
           <div>
             <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Contact Us</h3>
             <ul className="space-y-3">
@@ -74,7 +74,7 @@ const Footer = () => {
               </li>
             </ul>
             
-            {/* Social Links */}
+          
             <div className="flex space-x-4 mt-4">
               <a href="#" className="text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-500">
                 <Twitter className="h-5 w-5" />
@@ -89,10 +89,10 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Copyright */}
+        
         <div className="border-t border-gray-200 dark:border-gray-700 mt-8 pt-8 text-center">
           <p className="text-gray-600 dark:text-gray-400 text-sm">
-            © {new Date().getFullYear()} EcoReport. All rights reserved. Made with ❤️ for a cleaner environment.
+            © {new Date().getFullYear()} EcoReport. All rights reserved. Made with ❤️ for a cleaner environment.<br/>Devloped by GRONTHO❤️
           </p>
         </div>
       </div>

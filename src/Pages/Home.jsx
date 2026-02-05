@@ -72,7 +72,7 @@ const recentIssues = useLoaderData()
 
   return (
     <div>
-       {/* Banner Section with Slider */}
+       
       <section className="relative">
         <Slider {...sliderSettings}>
           {bannerSlides.map((slide, index) => (
@@ -120,7 +120,7 @@ const recentIssues = useLoaderData()
 
 
 
-            {/* Category Section */}
+            
       <section className="py-16 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -146,7 +146,7 @@ const recentIssues = useLoaderData()
         </div>
       </section>
 
-{/* Recent Issues */}
+
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -169,7 +169,7 @@ const recentIssues = useLoaderData()
       </section>
 
 
-       {/* CTA Section */}
+       
       <section className="py-16 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl mb-4 text-gray-900 dark:text-white">Join Our Volunteer Program</h2>

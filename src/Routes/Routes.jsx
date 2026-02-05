@@ -43,9 +43,9 @@ export const router = createBrowserRouter([
       {
         path: '/issues',
          element: (
-          <PrivateRouts>
+          
             <AllIssues/>
-          </PrivateRouts>
+          
         ),
         loader:()=> fetch('http://localhost:3000/issues')
       },
@@ -73,6 +73,7 @@ export const router = createBrowserRouter([
             <MyIssues/>
           </PrivateRouts>
         ),
+         loader:()=> fetch('http://localhost:3000/issues')
       },
       {
         path: '/my-contribution',

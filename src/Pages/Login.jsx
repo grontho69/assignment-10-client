@@ -6,7 +6,7 @@ import { motion as Motion } from "motion/react";
 ;
 import { toast } from "react-toastify";
 
-import { GoogleAuthProvider } from "firebase/auth";
+
 import { AuthContext } from "../context/AuthContext";
 
 

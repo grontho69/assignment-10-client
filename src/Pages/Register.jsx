@@ -36,10 +36,10 @@ const Register = () => {
         }
     
     
-//creat user
+
     createUserWithEmailAndPasswordFunc(email, password)
       .then(res => {
-// update profile
+
       updateProfileFunc( 
         displayName, photoURL
   

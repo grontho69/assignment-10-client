@@ -1,7 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { NavLink, Link, useLocation } from "react-router";
-import { motion as Motion } from "framer-motion";
-import { Menu, X, LogOut, Leaf, User } from "lucide-react";
+import { Menu, X, LogOut, Leaf, Sun, Moon } from "lucide-react";
 import MyContainer from "./MyContainer";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
@@ -16,13 +15,32 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
+  
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    }
+  }, []);
+
+  
+  const handleTheme = () => {
+    const html = document.documentElement;
+    html.classList.toggle("dark");
+    localStorage.setItem(
+      "theme",
+      html.classList.contains("dark") ? "dark" : "light"
+    );
+  };
+
+
   const logout = () => {
     signOutFunc()
       .then(() => {
         toast.success("Logout successful");
         setUser(null);
-        setProfileOpen(false);
         setOpen(false);
+        setProfileOpen(false);
       })
       .catch((e) => toast.error(e.message));
   };
@@ -40,91 +58,70 @@ const Navbar = () => {
     { name: "Issues", path: "/issues" },
   ];
 
-  return (
-    <Motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="bg-white sticky top-0 z-50 border-b border-gray-200"
-    >
-      <MyContainer>
-        <div className="flex items-center justify-between h-16">
+  const navLinks = user ? authNavLinks : guestNavLinks;
 
-          {/* Logo */}
+  return (
+    <nav className="sticky top-0 z-50 border-b bg-white dark:bg-gray-900">
+      <MyContainer>
+        <div className="flex items-center justify-between h-16 text-gray-800 dark:text-gray-100">
+
+          
           <Link to="/" className="flex items-center gap-2">
             <Leaf className="h-8 w-8 text-green-600" />
-            <span className="font-bold text-xl text-gray-900">
-              EcoReport
-            </span>
+            <span className="font-bold text-xl">EcoReport</span>
           </Link>
 
-          {/* Desktop Menu */}
+          
           <div className="hidden md:flex items-center gap-6">
-            {(user ? authNavLinks : guestNavLinks).map((item) => (
+            {navLinks.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
                 className={`text-sm ${
                   isActive(item.path)
-                    ? "text-black font-semibold"
-                    : "text-gray-900 hover:text-gray-700"
+                    ? "font-semibold text-green-600"
+                    : "opacity-80 hover:opacity-100"
                 }`}
               >
                 {item.name}
               </NavLink>
             ))}
 
+            <button onClick={handleTheme}>
+              <Sun className="h-5 w-5 block dark:hidden" />
+              <Moon className="h-5 w-5 hidden dark:block" />
+            </button>
+
             {loading ? (
-              <PacmanLoader color="#4f46e5" size={12} />
+              <PacmanLoader size={10} />
             ) : !user ? (
               <>
-                <NavLink
-                  to="/login"
-                  className="text-gray-900 hover:text-gray-700"
-                >
-                  Login
-                </NavLink>
+                <NavLink to="/login">Login</NavLink>
                 <NavLink
                   to="/register"
-                  className="px-4 py-2 bg-black text-white rounded-lg text-sm"
+                  className="px-4 py-1 rounded bg-green-600 text-white"
                 >
                   Register
                 </NavLink>
               </>
             ) : (
-              /* Profile Dropdown */
               <div className="relative">
-                <button
+                
+                <img
+                  src={user.photoURL || "https://via.placeholder.com/32"}
+                  alt="profile"
+                  className="h-8 w-8 rounded-full cursor-pointer"
                   onClick={() => setProfileOpen(!profileOpen)}
-                  className="focus:outline-none"
-                >
-                  {user.photoURL ? (
-                    <img
-                      src={user.photoURL}
-                      className="w-8 h-8 rounded-full object-cover border border-gray-300"
-                      alt="profile"
-                    />
-                  ) : (
-                    <User className="w-7 h-7 text-gray-900" />
-                  )}
-                </button>
+                />
 
+                
                 {profileOpen && (
-                  <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg border border-gray-200 overflow-hidden"
-                    
-                     
-                      onClick={() => setProfileOpen(false)}
-                      
-                    >
-                      
-                    
-
+                  <div className="absolute right-0 mt-2 w-32 bg-white dark:bg-gray-800 border rounded shadow-md z-50">
                     <button
                       onClick={logout}
-                      className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 flex items-center gap-2"
+                      className="flex items-center gap-2 px-4 py-2 w-full text-red-500 hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
-                      <LogOut className="w-4 h-4" />
-                      Logout
+                      <LogOut size={16} /> Logout
                     </button>
                   </div>
                 )}
@@ -132,75 +129,68 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile Right */}
+          
           <div className="md:hidden flex items-center gap-3">
-            {!user && !loading && (
-              <>
-                <Link to="/login" className="text-sm text-gray-900">
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  className="text-sm px-3 py-1 bg-black text-white rounded-md"
-                >
-                  Register
-                </Link>
-              </>
-            )}
+            <button onClick={handleTheme}>
+              <Sun className="h-5 w-5 block dark:hidden" />
+              <Moon className="h-5 w-5 hidden dark:block" />
+            </button>
 
             <button onClick={() => setOpen(!open)}>
-              {open ? (
-                <X className="w-6 h-6 text-gray-900" />
-              ) : (
-                <Menu className="w-6 h-6 text-gray-900" />
-              )}
+              {open ? <X /> : <Menu />}
             </button>
           </div>
         </div>
 
-        {/* Mobile Dropdown */}
+       
         {open && (
-          <Motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="md:hidden mt-4 bg-white rounded-xl p-4 space-y-4 border"
-          >
-            {(user ? authNavLinks : guestNavLinks).map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                onClick={() => setOpen(false)}
-                className="block text-gray-900"
-              >
-                {item.name}
-              </NavLink>
-            ))}
-
-            {user ? (
-              <button
-                onClick={logout}
-                className="flex items-center gap-2 text-red-600"
-              >
-                <LogOut className="w-4 h-4" />
-                Logout
-              </button>
-            ) : (
-              <>
-                <NavLink to="/login" className="block text-gray-900">
-                  Login
-                </NavLink>
+          <div className="md:hidden mt-3 pb-4 border-t dark:border-gray-700">
+            <div className="flex flex-col gap-3 pt-4">
+              {navLinks.map((item) => (
                 <NavLink
-                  to="/register"
-                  className="block bg-black text-white text-center rounded-md py-2"
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setOpen(false)}
+                  className={`px-2 ${
+                    isActive(item.path)
+                      ? "font-semibold text-green-600"
+                      : "opacity-80"
+                  }`}
                 >
-                  Register
+                  {item.name}
                 </NavLink>
-              </>
-            )}
-          </Motion.div>
+              ))}
+
+              {!user ? (
+                <>
+                  <NavLink to="/login" onClick={() => setOpen(false)}>
+                    Login
+                  </NavLink>
+                  <NavLink
+                    to="/register"
+                    onClick={() => setOpen(false)}
+                    className="text-green-600"
+                  >
+                    Register
+                  </NavLink>
+                </>
+              ) : (
+                <button
+                  onClick={() => {
+                    logout();
+                    setOpen(false);
+                  }}
+                  className="flex gap-2 text-red-500"
+                >
+                  <LogOut size={18} />
+                  Logout
+                </button>
+              )}
+            </div>
+          </div>
         )}
       </MyContainer>
-    </Motion.nav>
+    </nav>
   );
 };
 

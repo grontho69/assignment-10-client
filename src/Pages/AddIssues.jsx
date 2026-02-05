@@ -1,10 +1,11 @@
 import React, { useContext } from 'react'
 import { AuthContext } from '../context/AuthContext'
 import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router'
 
 const AddIssues = () => {
 const {user} = useContext(AuthContext)
-
+const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -29,6 +30,7 @@ const {user} = useContext(AuthContext)
       .then(res => res.json())
       .then(data => {
         toast.success('Issue reported successfully')
+        navigate('/my-issues');
       console.log(data)
       })
       .catch(err => {
