@@ -10,7 +10,7 @@ const Navbar = () => {
   const location = useLocation();
   const isActive = (path) => location.pathname === path;
 
-  const { user, setUser, signOutFunc, loading } = useContext(AuthContext);
+  const { user, setUser, signOutFunc } = useContext(AuthContext);
 
   const [open, setOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -47,7 +47,7 @@ const Navbar = () => {
 
   const authNavLinks = [
     { name: "Home", path: "/" },
-    { name: "All Issues", path: "/issues" },
+    { name: "All Issues", path: "/all-issues" },
     { name: "Add Issue", path: "/add-issue" },
     { name: "My Issues", path: "/my-issues" },
     { name: "My Contribution", path: "/my-contribution" },
@@ -92,9 +92,7 @@ const Navbar = () => {
               <Moon className="h-5 w-5 hidden dark:block" />
             </button>
 
-            {loading ? (
-              <PacmanLoader size={10} />
-            ) : !user ? (
+            { !user ? (
               <>
                 <NavLink to="/login">Login</NavLink>
                 <NavLink
