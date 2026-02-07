@@ -10,7 +10,7 @@ const MyContributions = () => {
 
     useEffect(() => {
         if (user?.email) {
-            fetch(`http://localhost:3000/my-contributions?email=${user.email}`, {
+            fetch(`https://eco-report-server.vercel.app/my-contributions?email=${user.email}`, {
                 headers: {
                     authorization: `Bearer ${user.accessToken}`
                 }

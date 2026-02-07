@@ -20,7 +20,7 @@ const navigate = useNavigate();
       date: new Date(),
     email:user.email,
     }
-    fetch('http://localhost:3000/issues', {
+    fetch('https://eco-report-server.vercel.app/issues', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

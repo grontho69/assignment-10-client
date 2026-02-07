@@ -27,7 +27,7 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <Home />,
-        loader:()=> fetch('http://localhost:3000/recent-issues')
+        loader:()=> fetch('https://eco-report-server.vercel.app/recent-issues')
       },
      
       {
@@ -43,7 +43,7 @@ export const router = createBrowserRouter([
       {
         path: '/issues',
         element: <AllIssues />,
-        loader:()=> fetch('http://localhost:3000/issues')
+        loader:()=> fetch('https://eco-report-server.vercel.app/issues')
       },
 
       {
@@ -55,7 +55,7 @@ export const router = createBrowserRouter([
            </PrivateRouts>
           
         ),
-        loader:()=> fetch('http://localhost:3000/issues')
+        loader:()=> fetch('https://eco-report-server.vercel.app/issues')
       },
       {
         path: '/add-issue',
@@ -81,7 +81,7 @@ export const router = createBrowserRouter([
             <MyIssues/>
           </PrivateRouts>
         ),
-         loader:()=> fetch('http://localhost:3000/issues')
+         loader:()=> fetch('https://eco-report-server.vercel.app/issues')
       },
       {
         path: '/my-contribution',

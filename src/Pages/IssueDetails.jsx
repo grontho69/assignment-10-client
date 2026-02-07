@@ -16,7 +16,7 @@ const IssueDetails = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch(`http://localhost:3000/issues/${id}`, {
+        fetch(`https://eco-report-server.vercel.app/issues/${id}`, {
           headers: {
             authorization:`Bearer ${user.accessToken}`
            }
@@ -35,7 +35,7 @@ const IssueDetails = () => {
     
     useEffect(() => {
         if (issue?._id) {
-            fetch(`http://localhost:3000/contributions?issueId=${issue._id}`)
+            fetch(`https://eco-report-server.vercel.app/contributions?issueId=${issue._id}`)
                 .then(res => res.json())
                 .then(data => setContributions(data))
                 .catch(err => console.error("Failed to load contributions", err));
@@ -64,7 +64,7 @@ const IssueDetails = () => {
         };
 
         try {
-            const response = await fetch('http://localhost:3000/contributions', {
+            const response = await fetch('https://eco-report-server.vercel.app/contributions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(contributionData),
