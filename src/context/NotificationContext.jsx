@@ -9,7 +9,8 @@ export const NotificationProvider = ({ children }) => {
     const [unreadCount, setUnreadCount] = useState(0);
 
     useEffect(() => {
-        const socket = io('http://localhost:3000'); // Use your backend URL
+        const socketUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        const socket = io(socketUrl);
 
         socket.on('notification', (notification) => {
             setNotifications(prev => [notification, ...prev]);
