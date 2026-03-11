@@ -10,10 +10,9 @@ const MyContributions = () => {
 
     useEffect(() => {
         if (user?.email) {
-            fetch(`https://eco-report-server.vercel.app/my-contributions?email=${user.email}`, {
-                headers: {
-                    authorization: `Bearer ${user.accessToken}`
-                }
+            const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
+            fetch(`${API_URL}/contributions/my?email=${user.email}`, {
+                credentials: 'include'
             })
             .then(res => res.json())
             .then(data => {
