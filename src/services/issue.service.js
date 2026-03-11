@@ -6,7 +6,7 @@ export const issueService = {
         return response.json();
     },
     getRecentIssues: async () => {
-        const response = await fetch(`${API_URL}/recent-issues`);
+        const response = await fetch(`${API_URL}/issues/recent-issues`);
         return response.json();
     },
     getIssueById: async (id, token) => {

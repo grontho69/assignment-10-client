@@ -22,7 +22,7 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <Home />,
-        loader: () => fetch(`${API_URL}/recent-issues`)
+        loader: () => fetch(`${API_URL}/issues/recent-issues`)
       },
       {
         path: "/dashboard",

@@ -9,7 +9,7 @@ export const NotificationProvider = ({ children }) => {
     const [unreadCount, setUnreadCount] = useState(0);
 
     useEffect(() => {
-        const socketUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        const socketUrl = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
         const socket = io(socketUrl);
 
         socket.on('notification', (notification) => {
