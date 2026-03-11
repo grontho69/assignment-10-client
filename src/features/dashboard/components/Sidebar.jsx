@@ -20,7 +20,25 @@ const menuItems = [
   { icon: Settings, label: 'Settings', path: '/settings' },
 ];
 
+import { AuthContext } from '../../../context/AuthContext';
+
 const Sidebar = () => {
+  const { user, signOutFunc, setUser } = React.useContext(AuthContext);
+
+  const menuItems = [
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+    { icon: FileText, label: 'Reports', path: '/all-issues' },
+    { icon: BarChart3, label: 'Analytics', path: '/analytics' },
+    ...(user?.role === 'Admin' ? [{ icon: Users, label: 'Users', path: '/users' }] : []),
+    { icon: Settings, label: 'Settings', path: '/settings' },
+  ];
+
+  const handleLogout = () => {
+    signOutFunc().then(() => {
+      setUser(null);
+    });
+  };
+
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-slate-900 text-white border-r border-slate-800 z-50 transition-all duration-300">
       <div className="p-6 flex items-center space-x-3">
@@ -54,7 +72,10 @@ const Sidebar = () => {
       </nav>
 
       <div className="absolute bottom-8 left-0 w-full px-4">
-        <button className="flex items-center space-x-3 p-3 w-full text-slate-400 hover:text-rose-400 hover:bg-rose-400/10 rounded-xl transition-all duration-200">
+        <button 
+          onClick={handleLogout}
+          className="flex items-center space-x-3 p-3 w-full text-slate-400 hover:text-rose-400 hover:bg-rose-400/10 rounded-xl transition-all duration-200"
+        >
           <LogOut className="w-5 h-5" />
           <span className="font-medium">Sign Out</span>
         </button>

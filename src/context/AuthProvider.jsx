@@ -62,17 +62,37 @@ console.log(auth)
   };
 
   useEffect(() => {
- const unsubscribe =   onAuthStateChanged(auth, (currUser) => {
-   setUser(currUser)
-   
-   setLoading(false)
- })
+    const unsubscribe = onAuthStateChanged(auth, async (currUser) => {
+      if (currUser) {
+        // Fetch role from backend
+        try {
+          const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
+          const response = await fetch(`${API_URL}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: currUser.email,
+              name: currUser.displayName,
+              photoURL: currUser.photoURL
+            }),
+            credentials: 'include'
+          });
+          const data = await response.json();
+          setUser({ ...currUser, ...data.user });
+        } catch (error) {
+          console.error("Auth sync failed", error);
+          setUser(currUser);
+        }
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    });
     
     return () => {
-      unsubscribe()
-    }
-    
-  },[])
+      unsubscribe();
+    };
+  }, []);
  
 
   return (

@@ -9,8 +9,10 @@ import IssueDetails from "../pages/IssueDetails";
 import MyIssues from "../pages/MyIssues";
 import MyContribution from "../pages/MyContribution";
 import PrivateRouts from "../private/PrivateRouts";
+import AdminRoute from "../private/AdminRoute";
 import Dashboard from "../pages/Dashboard";
 import SustainabilityAnalytics from "../pages/SustainabilityAnalytics";
+import Users from "../pages/Users";
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
 
@@ -93,6 +95,14 @@ export const router = createBrowserRouter([
           <PrivateRouts>
             <MyContribution />
           </PrivateRouts>
+        ),
+      },
+      {
+        path: '/users',
+        element: (
+          <AdminRoute>
+            <Users />
+          </AdminRoute>
         ),
       }
     ]

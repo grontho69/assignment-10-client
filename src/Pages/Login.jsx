@@ -28,18 +28,21 @@ const navigate = useNavigate()
       .then(async (res) => {
         const loggedUser = {
           email: res.user.email,
+          name: res.user.displayName,
+          photoURL: res.user.photoURL,
           role: 'Public' 
         };
 
         const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
-        await fetch(`${API_URL}/auth/login`, {
+        const response = await fetch(`${API_URL}/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(loggedUser),
           credentials: 'include'
         });
 
-        setUser(res.user);
+        const data = await response.json();
+        setUser({ ...res.user, ...data.user });
         toast.success("Login successful");
         navigate('/');
       })
@@ -57,18 +60,21 @@ const navigate = useNavigate()
       
       const loggedUser = {
         email: res.user.email,
+        name: res.user.displayName,
+        photoURL: res.user.photoURL,
         role: 'Public'
       };
 
       const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
-      await fetch(`${API_URL}/auth/login`, {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(loggedUser),
         credentials: 'include'
       });
 
-      setUser(res.user);
+      const data = await response.json();
+      setUser({ ...res.user, ...data.user });
       toast.success("Login successful");
       navigate('/');
       
