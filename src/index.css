@@ -967,3 +967,39 @@
 .dark .radio-label {
   color: #d1d5db;
 }
+
+/* Dashboard Specific Styles */
+@layer utilities {
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(203, 213, 225, 0.4) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(203, 213, 225, 0.4);
+  border-radius: 20px;
+}
+
+.recharts-cartesian-grid-horizontal line {
+  stroke: #f1f5f9;
+}
+
+.recharts-tooltip-cursor {
+  stroke: #f1f5f9;
+}

@@ -1,67 +1,72 @@
 import { createBrowserRouter } from "react-router";
-import MainLayout from "../Layout/MainLayout";
-import Home from "../Pages/Home";
+import MainLayout from "../layouts/MainLayout";
+import Home from "../pages/Home";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
+import AllIssues from "../pages/AllIssues";
+import AddIssues from "../pages/AddIssues";
+import IssueDetails from "../pages/IssueDetails";
+import MyIssues from "../pages/MyIssues";
+import MyContribution from "../pages/MyContribution";
+import PrivateRouts from "../private/PrivateRouts";
+import Dashboard from "../pages/Dashboard";
+import SustainabilityAnalytics from "../pages/SustainabilityAnalytics";
 
-
-
-
-import Login from "../Pages/Login";
-
-import Register from "../Pages/Register";
-import AllIssues from "../Pages/AllIssues";
-import AddIssues from "../Pages/AddIssues";
-import IssueDetails from "../Pages/IssueDetails";
-import MyIssues from "../Pages/MyIssues";
-import MyContribution from "../Pages/MyContribution";
-import PrivateRouts from "../Private/PrivateRouts";
-
-
-
+const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
-   
     children: [
       {
         index: true,
         element: <Home />,
-        loader:()=> fetch('https://eco-report-server.vercel.app/recent-issues')
+        loader: () => fetch(`${API_URL}/recent-issues`)
       },
-     
+      {
+        path: "/dashboard",
+        element: (
+          <PrivateRouts>
+            <Dashboard />
+          </PrivateRouts>
+        ),
+      },
+      {
+        path: "/analytics",
+        element: (
+          <PrivateRouts>
+            <SustainabilityAnalytics />
+          </PrivateRouts>
+        ),
+      },
       {
         path: '/login',
         element: <Login />,
-        
       },
-     
       {
         path: '/register',
-        element:<Register/>,
+        element: <Register />,
       },
       {
         path: '/issues',
         element: <AllIssues />,
-        loader:()=> fetch('https://eco-report-server.vercel.app/issues')
+        loader: () => fetch(`${API_URL}/issues`)
       },
-
       {
         path: 'all-issues',
-         element: (
-          
-           <PrivateRouts>
-              <AllIssues/>
-           </PrivateRouts>
-          
+        element: (
+          <PrivateRouts>
+            <AllIssues />
+          </PrivateRouts>
         ),
-        loader:()=> fetch('https://eco-report-server.vercel.app/issues')
+        loader: () => fetch(`${API_URL}/issues`)
       },
       {
         path: '/add-issue',
         element: (
           <PrivateRouts>
-            <AddIssues/>
+            <AddIssues />
           </PrivateRouts>
         ),
       },
@@ -69,32 +74,27 @@ export const router = createBrowserRouter([
         path: '/issue-details/:id',
         element: (
           <PrivateRouts>
-            <IssueDetails/>
+            <IssueDetails />
           </PrivateRouts>
         ),
-       
-  },
+      },
       {
         path: '/my-issues',
-         element: (
+        element: (
           <PrivateRouts>
-            <MyIssues/>
+            <MyIssues />
           </PrivateRouts>
         ),
-         loader:()=> fetch('https://eco-report-server.vercel.app/issues')
+        loader: () => fetch(`${API_URL}/issues`)
       },
       {
         path: '/my-contribution',
-         element: (
+        element: (
           <PrivateRouts>
-            <MyContribution/>
+            <MyContribution />
           </PrivateRouts>
         ),
       }
-      
-      
-
     ]
-}
-  
+  }
 ]);

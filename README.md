@@ -1,23 +1,29 @@
-# EcoReport - Environmental Issue Reporting Platform
+# 🌿 EcoReport - Frontend (Client)
 
+This is the React-based client application for the EcoReport platform.
 
+## 🚀 Quick Start
 
-## About
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Configure environment:
+   Create a `.env` file with `VITE_API_URL=http://localhost:3000`.
+3. Start development server:
+   ```bash
+   npm run dev
+   ```
 
-EcoReport is a comprehensive full-stack environmental issue reporting and tracking platform that empowers communities to report and resolve cleanliness-related issues in their local areas. The platform enables users to report issues like garbage buildup, broken footpaths, illegal dumping, waterlogging, and more while also facilitating community-driven cleanup initiatives through financial contributions.
+## 🏗 Modular Architecture
+The frontend is built using a feature-based structure to ensure scalability:
+- `src/features/dashboard`: Real-time statistics and UI components.
+- `src/features/analytics`: Sustainability charts using Recharts.
+- `src/services`: Abstracted API communication using credentials-enabled fetch.
 
-## Key Features
+## 🎨 UI & UX
+- **Responsive**: Mobile-first design using Tailwind CSS.
+- **Dynamic**: Smooth animations via Framer Motion.
+- **Interactive**: Real-time updates with Socket.IO.
 
-**Comprehensive Issue Reporting** - Users can report environmental issues with detailed information including images, location, and estimated fix budgets
-
-**Secure Authentication** - authentication system with email/password and Google Sign-In simulation, including password validation (uppercase, lowercase, minimum 6 characters)
-
-**Category-Based Organization** - Four main categories: Garbage, Illegal Construction, Broken Public Property, and Road Damage
-
-**Community Contributions** - Users can financially contribute to cleanup efforts with a built-in payment tracking system
-
-**Real-Time Progress Tracking** - Visual progress bars showing fund collection status against target budgets
-
- **Dark/Light Mode** - Complete dark mode support with smooth transitions for better user experience
-
- **Fully Responsive Design** - Mobile-first approach ensuring perfect display on all device sizes
+For full project documentation, including backend setup and API details, please refer to the [Main Project README](../README.md).
