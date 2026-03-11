@@ -20,12 +20,10 @@ const StatsCard = ({ title, value, trend, trendValue, icon: Icon, color }) => {
           <span>{trendValue}%</span>
         </div>
       </div>
-      
       <div>
         <p className="text-slate-500 text-sm font-medium">{title}</p>
         <h3 className="text-3xl font-bold text-slate-800 mt-1">{value}</h3>
       </div>
-      
       <div className="mt-4 pt-4 border-t border-slate-50">
         <p className="text-xs text-slate-400">vs last period</p>
       </div>

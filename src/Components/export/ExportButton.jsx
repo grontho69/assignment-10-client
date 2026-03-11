@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Download, FileText, FileSpreadsheet, Loader2 } from 'lucide-react';
-import { AnimatePresence } from 'framer-motion';
+import {  AnimatePresence } from 'framer-motion';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -11,7 +11,6 @@ const ExportButton = ({ targetId, projectName = "EcoReport" }) => {
   const exportPDF = async () => {
     setIsExporting(true);
     setIsOpen(false);
-    
     try {
       const element = document.getElementById(targetId);
       if (!element) throw new Error("Target element not found");
@@ -22,13 +21,11 @@ const ExportButton = ({ targetId, projectName = "EcoReport" }) => {
         logging: false,
         backgroundColor: '#F8FAFC'
       });
-      
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       const imgProps = pdf.getImageProperties(imgData);
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
       pdf.save(`${projectName}_Report_${new Date().toLocaleDateString()}.pdf`);
     } catch (error) {

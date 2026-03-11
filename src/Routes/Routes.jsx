@@ -12,8 +12,17 @@ import { PrivateRoute, AdminRoute, OrganizationRoute, ResearcherRoute } from "./
 import Dashboard from "../pages/Dashboard";
 import SustainabilityAnalytics from "../pages/SustainabilityAnalytics";
 import Users from "../pages/Users";
+import api from "../services/api";
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
+const safeLoader = (endpoint) => async () => {
+  try {
+    const res = await api.get(endpoint);
+    return res.data;
+  } catch (error) {
+    console.error(`Loader error for ${endpoint}:`, error);
+    return endpoint === '/issues/recent-issues' || endpoint === '/issues' ? [] : {};
+  }
+};
 
 export const router = createBrowserRouter([
   {
@@ -23,7 +32,7 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <Home />,
-        loader: () => fetch(`${API_URL}/issues/recent-issues`)
+        loader: safeLoader('/issues/recent-issues')
       },
       {
         path: "/dashboard",
@@ -44,12 +53,12 @@ export const router = createBrowserRouter([
       {
         path: '/issues',
         element: <AllIssues />,
-        loader: () => fetch(`${API_URL}/issues`)
+        loader: safeLoader('/issues')
       },
       {
         path: 'all-issues',
         element: <PrivateRoute><AllIssues /></PrivateRoute>,
-        loader: () => fetch(`${API_URL}/issues`)
+        loader: safeLoader('/issues')
       },
       {
         path: '/add-issue',
@@ -62,7 +71,7 @@ export const router = createBrowserRouter([
       {
         path: '/my-issues',
         element: <PrivateRoute><MyIssues /></PrivateRoute>,
-        loader: () => fetch(`${API_URL}/issues`)
+        loader: () => null 
       },
       {
         path: '/my-contribution',

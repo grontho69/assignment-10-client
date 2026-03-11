@@ -18,8 +18,6 @@ export const NotificationProvider = ({ children }) => {
         socket.on('notification', (notification) => {
             setNotifications(prev => [notification, ...prev]);
             setUnreadCount(prev => prev + 1);
-            
-            // Show toast for immediate feedback
             toast.info(notification.message, {
                 position: "bottom-right",
                 autoClose: 5000,

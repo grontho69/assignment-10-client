@@ -42,13 +42,10 @@ const AuthProvider = ({ children }) => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             if (currentUser) {
                 try {
-                    // Get MongoDB user info (with role) via our API
-                    // The interceptor will automatically handle the ID token
                     const response = await api.get('/users/profile');
                     setUser(response.data);
                 } catch (error) {
                     console.error("Failed to fetch user profile from MongoDB", error);
-                    // Fallback to firebase user if backend fails (might happen on first login)
                     setUser(currentUser);
                 }
             } else {

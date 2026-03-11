@@ -25,8 +25,12 @@ export const issueService = {
         const response = await api.delete(`/issues/${id}`);
         return response.data;
     },
+    getMyIssues: async (email) => {
+        const response = await api.get(`/issues/my-issues?email=${email}`);
+        return response.data;
+    },
     approveIssue: async (id) => {
-        const response = await api.post('/reports/approve', { id });
+        const response = await api.patch(`/issues/${id}/approve`);
         return response.data;
     }
 };

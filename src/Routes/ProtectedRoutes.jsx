@@ -19,7 +19,6 @@ const RoleRoute = ({ children, allowedRoles = [] }) => {
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
-    // If allowedRoles is empty, it just checks for any authenticated user (PrivateRoute)
     if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
         return <Navigate to="/" replace />;
     }

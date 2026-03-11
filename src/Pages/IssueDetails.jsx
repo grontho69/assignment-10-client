@@ -84,7 +84,6 @@ const IssueDetails = () => {
         <div>
             <div className="container mx-auto px-4 py-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                   
                     <div className="lg:col-span-2 space-y-6">
                         <div className="card">
                             <div className="h-96 overflow-hidden">
@@ -128,7 +127,6 @@ const IssueDetails = () => {
                             </div>
                         </div>
 
-                        
                         <div className="card">
                             <div className="card-content">
                                 <h3 className="text-xl mb-4 text-gray-900 dark:text-white">Contributors</h3>
@@ -165,7 +163,6 @@ const IssueDetails = () => {
                         </div>
                     </div>
 
-                    
                     <div className="space-y-6">
                         <div className="card">
                             <div className="card-content">
@@ -192,7 +189,6 @@ const IssueDetails = () => {
                     </div>
                 </div>
 
-                
                 {showModal && (
                     <div className="dialog-overlay" onClick={() => setShowModal(false)}>
                         <div className="dialog" onClick={(e) => e.stopPropagation()}>

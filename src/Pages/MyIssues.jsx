@@ -3,111 +3,101 @@ import { AuthContext } from '../context/AuthContext'
 import { Pencil, Trash2, X, Loader2 } from 'lucide-react'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
+import { issueService } from '../services/issue.service'
 
 const MyIssues = () => {
-
   const { user } = useContext(AuthContext)
   const [issues, setIssues] = useState([])
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(null); 
   const [isUpdating, setIsUpdating] = useState(false);
- 
+  const [loading, setLoading] = useState(true);
+
+  const fetchMyIssues = async () => {
+    if (!user?.email) return;
+    try {
+      const data = await issueService.getMyIssues(user.email);
+      setIssues(data);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to fetch your issues");
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchMyIssues();
+  }, [user?.email]);
+
   const handleEditClick = (issue) => {
-    setSelectedIssue(issue); 
+    setSelectedIssue({ ...issue }); 
     setShowUpdateModal(true);
   };
 
-  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setSelectedIssue(prev => ({ ...prev, [name]: value }));
   };
 
-  
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
     setIsUpdating(true);
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
-      const response = await fetch(`${API_URL}/issues/${selectedIssue._id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          ...selectedIssue,
-          amount: Number(selectedIssue.amount)
-        }),
-        credentials: 'include'
+      const result = await issueService.updateIssue(selectedIssue._id, {
+        ...selectedIssue,
+        amount: Number(selectedIssue.amount)
       });
 
-      const result = await response.json();
-
-      if (result.modifiedCount > 0) {
-       
-        setIssues(prev => prev.map(issue => 
-          issue._id === selectedIssue._id ? selectedIssue : issue
-        ));
+      if (result.success || result.modifiedCount > 0) {
         toast.success("Issue updated successfully!");
+        fetchMyIssues();
         setShowUpdateModal(false);
       } else {
         toast.info("No changes were made.");
       }
     } catch (error) {
       console.error(error);
-      toast.error("Failed to update issue.");
+      toast.error(error.response?.data?.message || "Failed to update issue.");
     } finally {
       setIsUpdating(false);
     }
   };
-  
-  useEffect(() => {
-    const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
-    fetch(`${API_URL}/issues/my-issues?email=${user.email}`, {
-      credentials: 'include'
-    })
-    .then(res => res.json())
-    .then(data => {
-      console.log(data)
-      setIssues(data)
-    })
-  }, [user.email, user.accessToken])
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      confirmButtonColor: '#ef4444',
+    }).then(async (result) => {
+      if (!result.isConfirmed) return;
 
- const handleDelete = (id) => {
-  Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to revert this!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "Yes, delete it!",
-  }).then((result) => {
-    if (!result.isConfirmed) return;
-
-    const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
-    fetch(`${API_URL}/issues/${id}`, {
-      method: "DELETE",
-      credentials: 'include'
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (!data.success) {
+      try {
+        const data = await issueService.deleteIssue(id);
+        if (data.success) {
+          setIssues(prev => prev.filter(issue => issue._id !== id));
+          toast.success("Issue deleted successfully");
+        } else {
           toast.error("Delete failed");
-          return;
         }
+      } catch (error) {
+        toast.error("Server error");
+      }
+    });
+  };
 
-        setIssues(prev => prev.filter(issue => issue._id !== id));
-        toast.success("Issue deleted successfully");
-      })
-      .catch(() => toast.error("Server error"));
-  });
-};
-
-
-
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="w-10 h-10 text-green-600 animate-spin" />
+      </div>
+    );
+  }
 
   return (
-   <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl md:text-4xl mb-8 text-gray-900 dark:text-white">My Issues</h1>
 
       {issues.length === 0 ? (
@@ -118,35 +108,33 @@ const MyIssues = () => {
         <div className="table-container">
           <table className="table">
             <thead>
-  <tr>
-    <th>Title</th>
-    <th>Category</th>
-    <th>Location</th>
-  
-    <th>Budget</th>
-    <th>Date</th>
-    <th className="text-right">Actions</th>
-  </tr>
-</thead>
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Location</th>
+                <th>Budget</th>
+                <th>Date</th>
+                <th className="text-right">Actions</th>
+              </tr>
+            </thead>
             <tbody>
               {issues.map((issue) => (
                 <tr key={issue._id}>
                   <td className="font-medium">{issue.title}</td>
                   <td>{issue.category}</td>
                   <td>{issue.location}</td>
-                  
-                  <td className="text-green-600">${issue.amount}</td>
+                  <td className="text-green-600 font-bold">${issue.amount}</td>
                   <td>{new Date(issue.date).toLocaleDateString()}</td>
                   <td className="text-right">
                     <div className="flex justify-end gap-2">
                       <button
-                        className="btn btn-sm btn-outline"
+                        className="btn btn-sm btn-ghost hover:text-blue-600"
                         onClick={() => handleEditClick(issue)}
                       >
                         <Pencil className="h-4 w-4" />
                       </button>
                       <button
-                        className="btn btn-sm btn-destructive"
+                        className="btn btn-sm btn-ghost hover:text-red-500"
                         onClick={() => handleDelete(issue._id)}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -160,7 +148,6 @@ const MyIssues = () => {
         </div>
       )}
 
-      
       {showUpdateModal && selectedIssue && (
         <div className="dialog-overlay" onClick={() => setShowUpdateModal(false)}>
           <div className="dialog" onClick={(e) => e.stopPropagation()}>
@@ -178,8 +165,6 @@ const MyIssues = () => {
             </div>
             <div className="dialog-content">
               <form onSubmit={handleUpdateSubmit} className="space-y-4">
-                
-                
                 <div className="space-y-2">
                   <label htmlFor="title" className="label">Title *</label>
                   <input
@@ -192,28 +177,22 @@ const MyIssues = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                   
-                  <div className="space-y-2">
-                    <label htmlFor="category" className="label">Category *</label>
-                    <select
-                      id="category"
-                      name="category"
-                      className="select"
-                      value={selectedIssue.category || ''}
-                      onChange={handleInputChange}
-                    >
-                      <option value="Garbage">Garbage</option>
-                      <option value="Illegal Construction">Illegal Construction</option>
-                      <option value="Broken Public Property">Broken Public Property</option>
-                      <option value="Road Damage">Road Damage</option>
-                    </select>
-                  </div>
-
-                  
+                <div className="space-y-2">
+                  <label htmlFor="category" className="label">Category *</label>
+                  <select
+                    id="category"
+                    name="category"
+                    className="select"
+                    value={selectedIssue.category || ''}
+                    onChange={handleInputChange}
+                  >
+                    <option value="Garbage">Garbage</option>
+                    <option value="Illegal Construction">Illegal Construction</option>
+                    <option value="Broken Public Property">Broken Public Property</option>
+                    <option value="Road Damage">Road Damage</option>
+                  </select>
                 </div>
 
-              
                 <div className="space-y-2">
                   <label htmlFor="description" className="label">Description *</label>
                   <textarea
@@ -227,7 +206,6 @@ const MyIssues = () => {
                   />
                 </div>
 
-                
                 <div className="space-y-2">
                   <label htmlFor="amount" className="label">Budget ($) *</label>
                   <input

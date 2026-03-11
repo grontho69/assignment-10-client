@@ -10,20 +10,11 @@ import {
   LogOut,
   ChevronRight
 } from 'lucide-react';
-import { motion } from 'framer-motion';
-
-const menuItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-  { icon: FileText, label: 'Reports', path: '/all-issues' },
-  { icon: BarChart3, label: 'Analytics', path: '/analytics' },
-  { icon: Users, label: 'Contributors', path: '/contributors' },
-  { icon: Settings, label: 'Settings', path: '/settings' },
-];
-
 import { AuthContext } from '../../../context/AuthContext';
+import { toast } from 'react-toastify';
 
 const Sidebar = () => {
-  const { user, signOutFunc, setUser } = React.useContext(AuthContext);
+  const { user, logoutUser } = React.useContext(AuthContext);
 
   const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
@@ -34,9 +25,11 @@ const Sidebar = () => {
   ];
 
   const handleLogout = () => {
-    signOutFunc().then(() => {
-      setUser(null);
-    });
+    logoutUser()
+      .then(() => {
+        toast.success("Logout successful");
+      })
+      .catch((e) => toast.error(e.message));
   };
 
   return (

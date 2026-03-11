@@ -11,15 +11,11 @@ import { NotificationProvider } from './context/NotificationContext';
 
 createRoot(document.getElementById('root')).render(
    <StrictMode>
-    
-     
      <NotificationProvider>
         <AuthProvider>
            <RouterProvider router={router} fallbackElement={<div className='h-screen flex items-center justify-center bg-slate-50 text-green-600 font-bold'>EcoReport Loading...</div>} />
           <ToastContainer />
             </AuthProvider>
      </NotificationProvider>
-      
-    
   </StrictMode>
 )

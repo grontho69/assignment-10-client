@@ -33,7 +33,7 @@ const Dashboard = () => {
           </motion.p>
         </header>
 
-        {/* Stats Grid */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
           <StatsCard 
             title="Total Contributors" 
@@ -69,11 +69,10 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Analytics & Activity */}
+        {}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
           <EmissionChart />
-          
-          {/* Side Panel */}
+          {}
           <motion.div 
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -98,7 +97,7 @@ const Dashboard = () => {
           </motion.div>
         </div>
 
-        {/* Table Section */}
+        {}
         <div className="mt-10">
           <RecentReportsTable />
         </div>

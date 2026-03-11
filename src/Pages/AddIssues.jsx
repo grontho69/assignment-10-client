@@ -10,7 +10,6 @@ const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
     const issueData = {
       title: e.target.title.value,
       category: e.target.category.value,
@@ -48,9 +47,7 @@ const navigate = useNavigate();
                 id="title"
                 name="title"
                 className="input"
-               
                 placeholder="Enter issue title"
-                
               />
             </div>
 
@@ -60,7 +57,6 @@ const navigate = useNavigate();
                 id="category"
                 name="category"
                 className="select"
-              
               >
                 <option value="">Select category</option>
                 <option value="Garbage">Garbage</option>
@@ -76,10 +72,7 @@ const navigate = useNavigate();
                 id="location"
                 name="location"
                 className="input"
-                
-                
                 placeholder="Enter location"
-                
               />
             </div>
 
@@ -89,10 +82,8 @@ const navigate = useNavigate();
                 id="description"
                 name="description"
                 className="textarea"
-               
                 placeholder="Describe the issue in detail"
                 rows={4}
-                
               />
             </div>
 
@@ -103,9 +94,7 @@ const navigate = useNavigate();
                 name="image"
                 type="url"
                 className="input"
-               
                 placeholder="Enter image URL"
-                
               />
             </div>
 
@@ -118,10 +107,7 @@ const navigate = useNavigate();
                 min="0"
                 step="1"
                 className="input"
-                
-                
                 placeholder="Enter estimated budget"
-                
               />
             </div>
 
@@ -133,9 +119,7 @@ const navigate = useNavigate();
             </div>
 
             <button type="submit" className="btn btn-primary w-full" >
-              
                 'Submit Issue'
-              
             </button>
           </form>
         </div>

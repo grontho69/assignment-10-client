@@ -72,7 +72,6 @@ const recentIssues = useLoaderData()
 
   return (
     <div>
-       
       <section className="relative">
         <Slider {...sliderSettings}>
           {bannerSlides.map((slide, index) => (
@@ -120,7 +119,6 @@ const recentIssues = useLoaderData()
 
 
 
-            
       <section className="py-16 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -155,7 +153,11 @@ const recentIssues = useLoaderData()
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {recentIssues.map(issue => (
-            <IssueCard key={issue.id} issue={issue} />
+            <IssueCard 
+              key={issue._id || issue.id} 
+              issue={issue} 
+              onUpdate={() => window.location.reload()}
+            />
           ))}
         </div>
           <div className="text-center mt-8">
@@ -169,7 +171,6 @@ const recentIssues = useLoaderData()
       </section>
 
 
-       
       <section className="py-16 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl mb-4 text-gray-900 dark:text-white">Join Our Volunteer Program</h2>

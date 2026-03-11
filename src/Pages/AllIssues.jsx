@@ -22,7 +22,6 @@ const AllIssues = () => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl md:text-4xl mb-8">All Issues</h1>
 
-     
       <div className="mb-8 max-w-md relative">
         <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
         <input
@@ -34,7 +33,6 @@ const AllIssues = () => {
         />
       </div>
 
-   
       {filteredIssues.length === 0 ? (
         <div className="text-center py-12">
           <p>No issues found</p>
@@ -42,7 +40,11 @@ const AllIssues = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredIssues.map(issue => (
-            <IssueCard key={issue._id} issue={issue} />
+            <IssueCard 
+              key={issue._id} 
+              issue={issue} 
+              onUpdate={() => window.location.reload()} 
+            />
           ))}
         </div>
       )}

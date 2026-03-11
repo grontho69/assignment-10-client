@@ -130,7 +130,6 @@
     @apply bg-background text-foreground;
   }
 
-  
 
   html {
     font-size: var(--font-size);
@@ -177,7 +176,6 @@
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
   }
-  
 }
 .btn {
   display: inline-flex;
@@ -279,7 +277,7 @@
   font-size: 1rem;
 }
 
-/* Card Styles */
+
 .card {
   background-color: white;
   border-radius: 0.5rem;
@@ -337,7 +335,7 @@
   border-top-color: #374151;
 }
 
-/* Input Styles */
+
 .input {
   width: 100%;
   padding: 0.5rem 0.75rem;
@@ -374,7 +372,7 @@
   color: #6b7280;
 }
 
-/* Textarea Styles */
+
 .textarea {
   width: 100%;
   padding: 0.5rem 0.75rem;
@@ -408,7 +406,7 @@
   color: #6b7280;
 }
 
-/* Label Styles */
+
 .label {
   display: block;
   font-size: 0.875rem;
@@ -421,7 +419,7 @@
   color: #d1d5db;
 }
 
-/* Select Styles */
+
 .select {
   width: 100%;
   padding: 0.5rem 0.75rem;
@@ -446,7 +444,7 @@
   box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
 }
 
-/* Badge Styles */
+
 .badge {
   display: inline-flex;
   align-items: center;
@@ -507,7 +505,7 @@
   color: #93c5fd;
 }
 
-/* Alert/Dialog Styles */
+
 .dialog-overlay {
   position: fixed;
   inset: 0;
@@ -581,7 +579,7 @@
   border-top-color: #374151;
 }
 
-/* Table Styles */
+
 .table-container {
   width: 100%;
   overflow-x: auto;
@@ -644,7 +642,7 @@
   background-color: #1f2937;
 }
 
-/* Tab Styles */
+
 .tabs {
   width: 100%;
 }
@@ -693,7 +691,7 @@
   padding: 1.5rem 0;
 }
 
-/* Skeleton Loader */
+
 .skeleton {
   background: linear-gradient(
     90deg,
@@ -725,7 +723,7 @@
   }
 }
 
-/* Switch/Toggle Styles */
+
 .switch {
   position: relative;
   display: inline-block;
@@ -775,7 +773,7 @@
   transform: translateX(20px);
 }
 
-/* Progress Bar */
+
 .progress {
   width: 100%;
   height: 0.5rem;
@@ -798,7 +796,7 @@
   background-color: #22c55e;
 }
 
-/* Separator */
+
 .separator {
   height: 1px;
   background-color: #e5e7eb;
@@ -809,7 +807,7 @@
   background-color: #374151;
 }
 
-/* Dropdown Menu */
+
 .dropdown {
   position: relative;
   display: inline-block;
@@ -875,7 +873,7 @@
   background-color: #374151;
 }
 
-/* Avatar */
+
 .avatar {
   position: relative;
   display: inline-flex;
@@ -915,7 +913,7 @@
   background-color: #4b5563;
 }
 
-/* Radio Button */
+
 .radio-group {
   display: flex;
   flex-direction: column;
@@ -968,7 +966,7 @@
   color: #d1d5db;
 }
 
-/* Dashboard Specific Styles */
+
 @layer utilities {
   .glass {
     background: rgba(255, 255, 255, 0.7);
