@@ -39,8 +39,8 @@ const ExportButton = ({ targetId, projectName = "EcoReport" }) => {
   };
 
   const exportCSV = () => {
-    // Standard approach: Trigger backend CSV route
-    window.location.href = 'https://eco-report-server.vercel.app/export/csv';
+    const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
+    window.location.href = `${API_URL}/export/csv`;
     setIsOpen(false);
   };
 

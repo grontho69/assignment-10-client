@@ -16,10 +16,9 @@ const IssueDetails = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch(`https://eco-report-server.vercel.app/issues/${id}`, {
-          headers: {
-            authorization:`Bearer ${user.accessToken}`
-           }
+        const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
+        fetch(`${API_URL}/issues/${id}`, {
+          credentials: 'include'
         })
         .then(res=>res.json())
             .then(data => {
@@ -35,7 +34,8 @@ const IssueDetails = () => {
     
     useEffect(() => {
         if (issue?._id) {
-            fetch(`https://eco-report-server.vercel.app/contributions?issueId=${issue._id}`)
+            const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
+            fetch(`${API_URL}/contributions?issueId=${issue._id}`)
                 .then(res => res.json())
                 .then(data => setContributions(data))
                 .catch(err => console.error("Failed to load contributions", err));
@@ -64,10 +64,12 @@ const IssueDetails = () => {
         };
 
         try {
-            const response = await fetch('https://eco-report-server.vercel.app/contributions', {
+            const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
+            const response = await fetch(`${API_URL}/contributions`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(contributionData),
+                credentials: 'include'
             });
 
             const result = await response.json();

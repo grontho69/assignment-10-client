@@ -20,12 +20,17 @@ const navigate = useNavigate();
       date: new Date(),
     email:user.email,
     }
-    fetch('https://eco-report-server.vercel.app/issues', {
+    const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
+    fetch(`${API_URL}/issues`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(fromData)
+      body: JSON.stringify({
+        ...fromData,
+        amount: Number(fromData.amount)
+      }),
+      credentials: 'include'
     })
       .then(res => res.json())
       .then(data => {

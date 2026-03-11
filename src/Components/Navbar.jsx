@@ -35,14 +35,20 @@ const Navbar = () => {
 
 
   const logout = () => {
-    signOutFunc()
-      .then(() => {
-        toast.success("Logout successful");
-        setUser(null);
-        setOpen(false);
-        setProfileOpen(false);
-      })
-      .catch((e) => toast.error(e.message));
+    const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
+    fetch(`${API_URL}/auth/logout`, {
+      method: 'POST',
+      credentials: 'include'
+    }).finally(() => {
+      signOutFunc()
+        .then(() => {
+          toast.success("Logout successful");
+          setUser(null);
+          setOpen(false);
+          setProfileOpen(false);
+        })
+        .catch((e) => toast.error(e.message));
+    });
   };
 
   const authNavLinks = [

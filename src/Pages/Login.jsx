@@ -20,37 +20,62 @@ const Login = () => {
 const navigate = useNavigate()
 
   const handelSignin = (e) => {
-    
     e.preventDefault();
-      const email = e.target.email.value;
+    const email = e.target.email.value;
     const password = e.target.password.value;
-    signInWithEmailAndPasswordFunc(email, password).then(res => {
-     
-      console.log(res);
-      setUser(res.user)
-      toast.success("login successfull")
-      navigate('/')
-    }).catch(e => {
-      toast.error(e.message)
-    })
-  }
-  console.log(user)
+
+    signInWithEmailAndPasswordFunc(email, password)
+      .then(async (res) => {
+        const loggedUser = {
+          email: res.user.email,
+          role: 'Public' 
+        };
+
+        const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
+        await fetch(`${API_URL}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(loggedUser),
+          credentials: 'include'
+        });
+
+        setUser(res.user);
+        toast.success("Login successful");
+        navigate('/');
+      })
+      .catch(e => {
+        toast.error(e.message);
+      });
+  };
 
   const handleGoogleSignIn = () => {
-    signInWithPopupFunc().then((res) => {
+    signInWithPopupFunc().then(async (res) => {
        if (!res.user?.emailVerified) {
-        toast.error('Your email is not verified')
+        toast.error('Your email is not verified');
         return;
       }
-      console.log(res);
-      setUser(res.user)
-      toast.success("login successfull")
-      navigate('/')
+      
+      const loggedUser = {
+        email: res.user.email,
+        role: 'Public'
+      };
+
+      const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
+      await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(loggedUser),
+        credentials: 'include'
+      });
+
+      setUser(res.user);
+      toast.success("Login successful");
+      navigate('/');
       
     }).catch((e) => {
       toast.error(e.message);
-    })
-  }
+    });
+  };
 
   
   const [show, setShow] = useState(false);

@@ -2,9 +2,30 @@ import React, { useState } from 'react';
 import { Search, User, ChevronDown, Menu, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import NotificationDropdown from './NotificationDropdown';
+import { AuthContext } from '../../../context/AuthContext';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router';
 
 const Topbar = () => {
+  const { user, setUser, signOutFunc } = React.useContext(AuthContext);
+  const navigate = useNavigate();
   const [showProfile, setShowProfile] = useState(false);
+
+  const logout = () => {
+    const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
+    fetch(`${API_URL}/auth/logout`, {
+      method: 'POST',
+      credentials: 'include'
+    }).finally(() => {
+      signOutFunc()
+        .then(() => {
+          toast.success("Logout successful");
+          setUser(null);
+          navigate('/login');
+        })
+        .catch((e) => toast.error(e.message));
+    });
+  };
 
   return (
     <header className="fixed top-0 right-0 left-64 h-20 bg-white/80 backdrop-blur-md border-b border-slate-200 z-40 transition-all duration-300">
@@ -33,12 +54,16 @@ const Topbar = () => {
               onClick={() => setShowProfile(!showProfile)}
               className="flex items-center space-x-3 p-1.5 hover:bg-slate-100 rounded-2xl transition-all"
             >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold shadow-lg shadow-emerald-200">
-                JD
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold shadow-lg shadow-emerald-200 overflow-hidden">
+                {user?.photoURL ? (
+                  <img src={user.photoURL} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  user?.displayName?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'
+                )}
               </div>
               <div className="hidden lg:block text-left pr-2">
-                <p className="text-sm font-bold text-slate-800">John Doe</p>
-                <p className="text-xs text-slate-500">Administrator</p>
+                <p className="text-sm font-bold text-slate-800">{user?.displayName || 'User'}</p>
+                <p className="text-xs text-slate-500">{user?.email}</p>
               </div>
               <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${showProfile ? 'rotate-180' : ''}`} />
             </button>
@@ -61,7 +86,10 @@ const Topbar = () => {
                       <span>Account Settings</span>
                     </button>
                     <div className="h-px bg-slate-100 my-2"></div>
-                    <button className="w-full px-4 py-2.5 text-left text-sm text-rose-600 hover:bg-rose-50 flex items-center space-x-3">
+                    <button 
+                      onClick={logout}
+                      className="w-full px-4 py-2.5 text-left text-sm text-rose-600 hover:bg-rose-50 flex items-center space-x-3"
+                    >
                       <Menu className="w-4 h-4" />
                       <span>Log Out</span>
                     </button>

@@ -29,13 +29,17 @@ const MyIssues = () => {
     setIsUpdating(true);
 
     try {
-      const response = await fetch(`https://eco-report-server.vercel.app/issues/${selectedIssue._id}`, {
+      const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
+      const response = await fetch(`${API_URL}/issues/${selectedIssue._id}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
-          authorization: `Bearer ${user.accessToken}`
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(selectedIssue)
+        body: JSON.stringify({
+          ...selectedIssue,
+          amount: Number(selectedIssue.amount)
+        }),
+        credentials: 'include'
       });
 
       const result = await response.json();
@@ -59,10 +63,9 @@ const MyIssues = () => {
   };
   
   useEffect(() => {
-    fetch(`https://eco-report-server.vercel.app/my-issues?email=${user.email}`, {
-      headers: {
-        authorization: `Bearer ${user.accessToken}`
-      }
+    const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
+    fetch(`${API_URL}/issues/my-issues?email=${user.email}`, {
+      credentials: 'include'
     })
     .then(res => res.json())
     .then(data => {
@@ -81,11 +84,10 @@ const MyIssues = () => {
   }).then((result) => {
     if (!result.isConfirmed) return;
 
-    fetch(`https://eco-report-server.vercel.app/issues/${id}`, {
+    const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
+    fetch(`${API_URL}/issues/${id}`, {
       method: "DELETE",
-      headers: {
-        authorization: `Bearer ${user.accessToken}`,
-      },
+      credentials: 'include'
     })
       .then(res => res.json())
       .then(data => {
