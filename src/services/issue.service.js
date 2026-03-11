@@ -1,20 +1,32 @@
-const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
+import api from './api';
 
 export const issueService = {
     getAllIssues: async () => {
-        const response = await fetch(`${API_URL}/issues`);
-        return response.json();
+        const response = await api.get('/issues');
+        return response.data;
     },
     getRecentIssues: async () => {
-        const response = await fetch(`${API_URL}/issues/recent-issues`);
-        return response.json();
+        const response = await api.get('/issues/recent-issues');
+        return response.data;
     },
-    getIssueById: async (id, token) => {
-        const response = await fetch(`${API_URL}/issues/${id}`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        return response.json();
+    getIssueById: async (id) => {
+        const response = await api.get(`/issues/${id}`);
+        return response.data;
+    },
+    createIssue: async (issueData) => {
+        const response = await api.post('/issues', issueData);
+        return response.data;
+    },
+    updateIssue: async (id, issueData) => {
+        const response = await api.put(`/issues/${id}`, issueData);
+        return response.data;
+    },
+    deleteIssue: async (id) => {
+        const response = await api.delete(`/issues/${id}`);
+        return response.data;
+    },
+    approveIssue: async (id) => {
+        const response = await api.post('/reports/approve', { id });
+        return response.data;
     }
 };

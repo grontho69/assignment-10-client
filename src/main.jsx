@@ -15,7 +15,7 @@ createRoot(document.getElementById('root')).render(
      
      <NotificationProvider>
         <AuthProvider>
-           <RouterProvider router={router} />
+           <RouterProvider router={router} fallbackElement={<div className='h-screen flex items-center justify-center bg-slate-50 text-green-600 font-bold'>EcoReport Loading...</div>} />
           <ToastContainer />
             </AuthProvider>
      </NotificationProvider>

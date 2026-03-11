@@ -6,13 +6,11 @@ import MyContainer from '../components/MyContainer';
 
 const MainLayout =()=> {
   return (
-    <div>
+    <div className="min-h-screen flex flex-col transition-colors duration-300">
       <Navbar/>
-    
-         
-      <Outlet/>
-      
-     
+      <main className="flex-grow">
+        <Outlet/>
+      </main>
       <Footer/>
     </div>
   );

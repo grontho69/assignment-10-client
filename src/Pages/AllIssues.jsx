@@ -42,7 +42,7 @@ const AllIssues = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredIssues.map(issue => (
-            <IssueCard key={issue.id} issue={issue} />
+            <IssueCard key={issue._id} issue={issue} />
           ))}
         </div>
       )}

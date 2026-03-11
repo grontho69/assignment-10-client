@@ -7,10 +7,12 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
+    "test:e2e": "cypress open",
     "preview": "vite preview"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
+    "axios": "^1.13.6",
     "firebase": "^12.8.0",
     "html2canvas": "^1.4.1",
     "json2csv": "^6.0.0-alpha.2",
@@ -36,6 +38,7 @@
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
+    "cypress": "^15.11.0",
     "daisyui": "^5.5.14",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",

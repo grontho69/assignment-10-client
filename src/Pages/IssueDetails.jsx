@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { MapPin, Calendar, DollarSign, User, Loader2, X } from 'lucide-react';
-import {   useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { AuthContext } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import { RotateLoader } from 'react-spinners';
+import { issueService } from '../services/issue.service';
+import { contributionService } from '../services/contribution.service';
 
 const IssueDetails = () => {
     const { user } = useContext(AuthContext);
@@ -16,33 +18,22 @@ const IssueDetails = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
-        fetch(`${API_URL}/issues/${id}`, {
-          credentials: 'include'
-        })
-        .then(res=>res.json())
+        issueService.getIssueById(id)
             .then(data => {
-                console.log(data)
-                setIssue(data.result)
-                setLoading(false)
-        })
-    },[])
+                setIssue(data.result);
+                setLoading(false);
+            })
+            .catch(() => setLoading(false));
+    }, [id]);
 
-
-
-
-    
     useEffect(() => {
         if (issue?._id) {
-            const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
-            fetch(`${API_URL}/contributions?issueId=${issue._id}`)
-                .then(res => res.json())
+            contributionService.getContributionsByIssueId(issue._id)
                 .then(data => setContributions(data))
                 .catch(err => console.error("Failed to load contributions", err));
         }
     }, [issue]);
 
-    
     const totalRaised = contributions.reduce((acc, curr) => acc + Number(curr.amount), 0);
     const progressPercentage = Math.min((totalRaised / (issue.amount || 1)) * 100, 100);
 
@@ -59,20 +50,12 @@ const IssueDetails = () => {
             contributorImage: user?.photoURL || '',
             phoneNumber: form.phone.value,
             address: form.address.value,
-            amount: form.contributionAmount.value,
+            amount: Number(form.contributionAmount.value),
             additionalInfo: form.additionalInfo.value,
         };
 
         try {
-            const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
-            const response = await fetch(`${API_URL}/contributions`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(contributionData),
-                credentials: 'include'
-            });
-
-            const result = await response.json();
+            const result = await contributionService.createContribution(contributionData);
 
             if (result._id) {
                 toast.success('Contribution successful!');
@@ -82,8 +65,7 @@ const IssueDetails = () => {
                 form.reset();
             }
         } catch (error) {
-            console.error(error);
-            toast.error('Something went wrong.');
+            toast.error(error.response?.data?.message || 'Something went wrong.');
         } finally {
             setIsSubmitting(false);
         }

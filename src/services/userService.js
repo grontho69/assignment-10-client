@@ -1,19 +1,16 @@
-const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
+import api from './api';
 
 export const userService = {
-    getAllUsers: async () => {
-        const response = await fetch(`${API_URL}/users`, {
-            credentials: 'include'
-        });
-        return response.json();
+    getAllUsers: async (search = '') => {
+        const response = await api.get(`/users?search=${search}`);
+        return response.data;
     },
-    updateUserRole: async (email, role) => {
-        const response = await fetch(`${API_URL}/users/role`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, role }),
-            credentials: 'include'
-        });
-        return response.json();
+    updateUserRole: async (userId, role) => {
+        const response = await api.patch(`/users/${userId}/role`, { role });
+        return response.data;
+    },
+    deleteUser: async (userId) => {
+        const response = await api.delete(`/users/${userId}`);
+        return response.data;
     }
 };

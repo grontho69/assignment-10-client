@@ -2,45 +2,34 @@ import React, { useContext } from 'react'
 import { AuthContext } from '../context/AuthContext'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router'
+import { issueService } from '../services/issue.service'
 
 const AddIssues = () => {
 const {user} = useContext(AuthContext)
 const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     
-    const fromData = {
+    const issueData = {
       title: e.target.title.value,
       category: e.target.category.value,
       location: e.target.location.value,
       description: e.target.description.value,
       image: e.target.image.value,
-      amount: e.target.amount.value,
+      amount: Number(e.target.amount.value),
       date: new Date(),
-    email:user.email,
+      email: user.email,
+      status: 'Pending'
     }
-    const API_URL = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
-    fetch(`${API_URL}/issues`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...fromData,
-        amount: Number(fromData.amount)
-      }),
-      credentials: 'include'
-    })
-      .then(res => res.json())
-      .then(data => {
-        toast.success('Issue reported successfully')
-        navigate('/my-issues');
-      console.log(data)
-      })
-      .catch(err => {
-      console.log(err)
-    })
+
+    try {
+      await issueService.createIssue(issueData);
+      toast.success('Issue reported successfully');
+      navigate('/my-issues');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to submit issue');
+    }
 }
 
 

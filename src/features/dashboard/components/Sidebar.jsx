@@ -29,7 +29,7 @@ const Sidebar = () => {
     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
     { icon: FileText, label: 'Reports', path: '/all-issues' },
     { icon: BarChart3, label: 'Analytics', path: '/analytics' },
-    ...(user?.role === 'Admin' ? [{ icon: Users, label: 'Users', path: '/users' }] : []),
+    ...(user?.role === 'admin' ? [{ icon: Users, label: 'Users', path: '/users' }] : []),
     { icon: Settings, label: 'Settings', path: '/settings' },
   ];
 

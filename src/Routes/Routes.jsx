@@ -8,8 +8,7 @@ import AddIssues from "../pages/AddIssues";
 import IssueDetails from "../pages/IssueDetails";
 import MyIssues from "../pages/MyIssues";
 import MyContribution from "../pages/MyContribution";
-import PrivateRouts from "../private/PrivateRouts";
-import AdminRoute from "../private/AdminRoute";
+import { PrivateRoute, AdminRoute, OrganizationRoute, ResearcherRoute } from "./ProtectedRoutes";
 import Dashboard from "../pages/Dashboard";
 import SustainabilityAnalytics from "../pages/SustainabilityAnalytics";
 import Users from "../pages/Users";
@@ -28,19 +27,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "/dashboard",
-        element: (
-          <PrivateRouts>
-            <Dashboard />
-          </PrivateRouts>
-        ),
+        element: <PrivateRoute><Dashboard /></PrivateRoute>,
       },
       {
         path: "/analytics",
-        element: (
-          <PrivateRouts>
-            <SustainabilityAnalytics />
-          </PrivateRouts>
-        ),
+        element: <ResearcherRoute><SustainabilityAnalytics /></ResearcherRoute>,
       },
       {
         path: '/login',
@@ -57,53 +48,29 @@ export const router = createBrowserRouter([
       },
       {
         path: 'all-issues',
-        element: (
-          <PrivateRouts>
-            <AllIssues />
-          </PrivateRouts>
-        ),
+        element: <PrivateRoute><AllIssues /></PrivateRoute>,
         loader: () => fetch(`${API_URL}/issues`)
       },
       {
         path: '/add-issue',
-        element: (
-          <PrivateRouts>
-            <AddIssues />
-          </PrivateRouts>
-        ),
+        element: <OrganizationRoute><AddIssues /></OrganizationRoute>,
       },
       {
         path: '/issue-details/:id',
-        element: (
-          <PrivateRouts>
-            <IssueDetails />
-          </PrivateRouts>
-        ),
+        element: <PrivateRoute><IssueDetails /></PrivateRoute>,
       },
       {
         path: '/my-issues',
-        element: (
-          <PrivateRouts>
-            <MyIssues />
-          </PrivateRouts>
-        ),
+        element: <PrivateRoute><MyIssues /></PrivateRoute>,
         loader: () => fetch(`${API_URL}/issues`)
       },
       {
         path: '/my-contribution',
-        element: (
-          <PrivateRouts>
-            <MyContribution />
-          </PrivateRouts>
-        ),
+        element: <PrivateRoute><MyContribution /></PrivateRoute>,
       },
       {
         path: '/users',
-        element: (
-          <AdminRoute>
-            <Users />
-          </AdminRoute>
-        ),
+        element: <AdminRoute><Users /></AdminRoute>,
       }
     ]
   }

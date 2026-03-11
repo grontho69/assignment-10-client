@@ -10,7 +10,10 @@ export const NotificationProvider = ({ children }) => {
 
     useEffect(() => {
         const socketUrl = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
-        const socket = io(socketUrl);
+        const socket = io(socketUrl, {
+            transports: ['websocket'],
+            withCredentials: true
+        });
 
         socket.on('notification', (notification) => {
             setNotifications(prev => [notification, ...prev]);
