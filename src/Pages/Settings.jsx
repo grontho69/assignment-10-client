@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 
 const Settings = () => {
-    const { user, setUser } = useAuth();
+    const { user, updateUserNameAndPhoto, refreshUser } = useAuth();
     const [name, setName] = useState(user?.name || '');
     const [updating, setUpdating] = useState(false);
     
@@ -22,14 +22,18 @@ const Settings = () => {
         e.preventDefault();
         setUpdating(true);
         try {
+            // Update Firebase
+            await updateUserNameAndPhoto(name, user?.photoURL);
+            
+            // Update MongoDB
             const res = await api.patch('/users/profile', { name });
+            
             if (res.data.success) {
                 toast.success("Profile updated successfully!");
-                // Optionally update local user state if needed, or rely on reload
-                // For better UX, we can update the user context
-                setUser(prev => ({ ...prev, name }));
+                await refreshUser();
             }
         } catch (err) {
+            console.error(err);
             toast.error("Failed to update profile");
         } finally {
             setUpdating(false);

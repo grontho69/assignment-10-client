@@ -18,10 +18,16 @@ const Users = () => {
 
   const handleUpdateRole = async (id, role) => {
     try {
-      await api.patch(`/users/${id}/role`, { role });
+      if (role === 'admin') {
+        await api.patch(`/users/make-admin/${id}`);
+      } else {
+        await api.patch(`/users/${id}/role`, { role });
+      }
       toast.success("Identity Updated");
       fetchUsers();
-    } catch (e) { toast.error("Revision Failed"); }
+    } catch (e) { 
+        toast.error(e.response?.data?.message || "Revision Failed"); 
+    }
   };
 
   const filtered = users.filter(u => u.name?.toLowerCase().includes(search.toLowerCase()) || u.email?.toLowerCase().includes(search.toLowerCase()));

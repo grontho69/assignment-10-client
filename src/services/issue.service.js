@@ -22,7 +22,7 @@ export const issueService = {
         return res.data;
     },
     updateIssue: async (id, data) => {
-        const res = await api.patch(`/issues/${id}`, data);
+        const res = await api.patch(`/issues/${id}/status`, data);
         return res.data;
     },
     deleteIssue: async (id) => {

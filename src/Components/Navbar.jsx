@@ -41,17 +41,14 @@ const Navbar = () => {
   const navLinks = user 
     ? [
         { name: "Home", path: "/" },
-        { name: "All Issues", path: "/all-issues" },
-        { name: "Add Issues", path: "/add-issue" },
+        { name: "Issues", path: "/all-issues" },
+        { name: "Add Issue", path: "/add-issue" },
         { name: "My Issues", path: "/my-issues" },
-        { name: "My Contribution", path: "/my-contribution" },
-        { name: "Dashboard", path: "/dashboard" },
+        ...(user.role === 'admin' ? [{ name: "Admin Panel", path: "/dashboard" }] : []),
       ]
     : [
         { name: "Home", path: "/" },
         { name: "Issues", path: "/all-issues" },
-        { name: "Login", path: "/login" },
-        { name: "Register", path: "/register" },
       ];
 
   useEffect(() => {

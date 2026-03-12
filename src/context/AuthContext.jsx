@@ -49,6 +49,26 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
+  const refreshUser = async () => {
+    if (!auth.currentUser) return;
+    try {
+      const profileRes = await api.get('/users/profile');
+      const roleRes = await api.get('/users/role');
+      const backendUser = profileRes.data;
+      const backendRole = roleRes.data.role;
+      
+      setUser({
+        ...auth.currentUser,
+        name: backendUser.name || auth.currentUser.displayName,
+        photoURL: backendUser.photoURL || auth.currentUser.photoURL,
+        role: backendRole || 'user',
+        dbId: backendUser._id
+      });
+    } catch (e) {
+      console.error("Manual sync error:", e);
+    }
+  };
+
   useEffect(() => {
     const unSubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -56,17 +76,23 @@ export const AuthProvider = ({ children }) => {
           const token = await currentUser.getIdToken();
           localStorage.setItem('token', token);
           
-          const res = await api.get('/users/profile');
-          const backendUser = res.data;
+          // Step 6: Fetch role from backend
+          const profileRes = await api.get('/users/profile');
+          const roleRes = await api.get('/users/role');
+          const backendUser = profileRes.data;
+          const backendRole = roleRes.data.role;
+
+          console.log("Sync Login - Role:", backendRole);
+          
           setUser({
             ...currentUser,
             name: backendUser.name || currentUser.displayName,
             photoURL: backendUser.photoURL || currentUser.photoURL,
-            role: backendUser.role || 'user',
+            role: backendRole || 'user',
             dbId: backendUser._id
           });
         } catch (e) {
-          console.error("User sync error:", e);
+          console.error("Initial sync error:", e);
           setUser({ ...currentUser, role: 'user' });
         }
       } else {
@@ -80,12 +106,14 @@ export const AuthProvider = ({ children }) => {
 
   const authInfo = {
     user,
+    setUser,
     loading,
     loginUser,
     registerUser,
     signInWithGoogle,
     logoutUser,
     updateUserNameAndPhoto,
+    refreshUser
   };
 
   return (
