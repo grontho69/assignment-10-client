@@ -13,7 +13,6 @@ import Dashboard from "../pages/Dashboard";
 import SustainabilityAnalytics from "../pages/SustainabilityAnalytics";
 import Users from "../pages/Users";
 import Settings from "../pages/Settings";
-import Reports from "../pages/Reports";
 import api from "../services/api";
 
 const issuesLoader = async () => {
@@ -44,7 +43,7 @@ export const router = createBrowserRouter([
         element: <Home />,
         loader: async () => {
             try {
-                const res = await api.get('/issues/recent-issues');
+                const res = await api.get('/issues/recent');
                 return res.data;
             } catch (err) {
                 return [];
@@ -58,7 +57,8 @@ export const router = createBrowserRouter([
       },
       {
         path: "/reports",
-        element: <PrivateRoute><Reports /></PrivateRoute>,
+        element: <AllIssues />,
+        loader: issuesLoader
       },
       {
         path: '/add-issue',

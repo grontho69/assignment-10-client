@@ -1,192 +1,68 @@
-import React from 'react'
-import { Trash2, Building, Wrench, Car, AlertCircle, CheckCircle, Users, ArrowRight } from 'lucide-react';
-import { Typewriter } from 'react-simple-typewriter';
-import Slider from 'react-slick';
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import { Link, useLoaderData } from 'react-router';
-import IssueCard from '../Components/IssueCard';
+import React, { useMemo, useState } from 'react';
+import { useLoaderData, Link } from 'react-router';
+import IssueCard from '../components/IssueCard';
+import { Search, ArrowRight, Leaf, Shield, Heart } from 'lucide-react';
+import MyContainer from '../components/MyContainer';
+import { motion } from 'framer-motion';
 
-
-const categories = [
-  {
-    name: 'Garbage',
-    icon: Trash2,
-    description: 'Report garbage accumulation and waste management issues',
-    color: 'text-orange-600 dark:text-orange-500',
-    bgColor: 'bg-orange-50 dark:bg-orange-900/20'
-  },
-  {
-    name: 'Illegal Construction',
-    icon: Building,
-    description: 'Report unauthorized construction activities',
-    color: 'text-red-600 dark:text-red-500',
-    bgColor: 'bg-red-50 dark:bg-red-900/20'
-  },
-  {
-    name: 'Broken Public Property',
-    icon: Wrench,
-    description: 'Report damaged public infrastructure',
-    color: 'text-blue-600 dark:text-blue-500',
-    bgColor: 'bg-blue-50 dark:bg-blue-900/20'
-  },
-  {
-    name: 'Road Damage',
-    icon: Car,
-    description: 'Report potholes, waterlogging, and road issues',
-    color: 'text-purple-600 dark:text-purple-500',
-    bgColor: 'bg-purple-50 dark:bg-purple-900/20'
-  }
-];
 const Home = () => {
+    const recentIssues = useLoaderData() || [];
 
-const recentIssues = useLoaderData()
-
-   const sliderSettings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 4000,
-    arrows: false
-  };
-  const bannerSlides = [
-    {
-      image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=1200',
-      title: 'Report Environmental Issues',
-      subtitle: 'Make your community cleaner and better'
-    },
-    {
-      image: 'https://cdn.pixabay.com/photo/2021/11/20/02/50/waste-management-6810733_1280.jpg',
-      title: 'Community Driven Solutions',
-      subtitle: 'Together we can create lasting change'
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1200',
-      title: 'Track and Contribute',
-      subtitle: 'Monitor progress and support cleanup efforts'
-    }
-  ];
-
-  return (
-    <div>
-      <section className="relative">
-        <Slider {...sliderSettings}>
-          {bannerSlides.map((slide, index) => (
-            <div key={index} className="relative">
-              <div className="relative h-125 md:h-150">
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${slide.image})` }}
-                >
-                  <div className="absolute inset-0 bg-linear-to-r from-black/70 to-black/50"></div>
-                </div>
-                <div className="relative container mx-auto px-4 h-full flex items-center">
-                  <div className="text-white max-w-2xl">
-                    <h1 className="text-4xl md:text-6xl mb-4">
-                      {slide.title}
-                    </h1>
-                    <p className="text-xl md:text-2xl mb-8">{slide.subtitle}</p>
-                    <div className="text-2xl md:text-3xl text-green-400 mb-8 h-12">
-                      <Typewriter
-                        words={['Report Issues', 'Track Progress', 'Make Impact', 'Build Community']}
-                        loop={0}
-                        cursor
-                        cursorStyle="|"
-                        typeSpeed={70}
-                        deleteSpeed={50}
-                        delaySpeed={1000}
-                      />
+    return (
+        <div className="bg-slate-50 dark:bg-gray-950 min-h-screen transition-colors">
+            {}
+            <section className="relative pt-32 pb-44 overflow-hidden">
+                <MyContainer>
+                    <div className="max-w-4xl">
+                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+                            <div className="flex items-center gap-3 text-emerald-600 font-black uppercase tracking-[0.3em] text-[10px] mb-8">
+                                <span className="w-12 h-px bg-emerald-600"></span>
+                                Citizen Action Network
+                            </div>
+                            <h1 className="text-7xl lg:text-8xl font-black text-slate-800 dark:text-white leading-[0.9] tracking-tighter mb-10">
+                                Heal Your <br /> 
+                                <span className="text-emerald-500">City.</span> Together.
+                            </h1>
+                            <p className="text-xl lg:text-2xl text-slate-500 dark:text-gray-400 font-medium leading-relaxed max-w-2xl mb-12">
+                                Report structural and environmental concerns in seconds. Join 8,000+ verified citizens making our urban spaces cleaner and safer.
+                            </p>
+                            <div className="flex flex-col sm:flex-row gap-6">
+                                <Link to="/all-issues" className="h-16 px-10 bg-slate-900 dark:bg-emerald-600 text-white flex items-center justify-center gap-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl hover:bg-black transition-all hover:scale-105 active:scale-95">
+                                    Explore Active Issues <ArrowRight size={18} />
+                                </Link>
+                                <Link to="/add-issue" className="h-16 px-10 bg-white dark:bg-gray-800 text-slate-800 dark:text-white border dark:border-gray-700 flex items-center justify-center gap-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-50 transition-all">
+                                    Report New Concern
+                                </Link>
+                            </div>
+                        </motion.div>
                     </div>
-                    <Link to="/add-issue">
-                      <button
-                        className="bg-green-600 hover:bg-green-700 btn btn-lg btn-primarytext-white">
-                        Report an Issue
-                        <ArrowRight className="ml-2 h-5 w-5" />
-                      </button>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </Slider>
-      </section>
+                </MyContainer>
+                {}
+                <div className="absolute top-0 right-0 w-[40%] h-full bg-slate-100 dark:bg-gray-900/50 -z-10 skew-x-[-12deg] translate-x-20"></div>
+                <div className="absolute top-1/2 right-[10%] -translate-y-1/2 w-96 h-96 bg-emerald-500/20 rounded-full blur-[120px] -z-10"></div>
+            </section>
 
-
-
-
-
-      <section className="py-16 bg-gray-50 dark:bg-gray-800">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl mb-4 text-gray-900 dark:text-white">Issue Categories</h2>
-            <p className="text-gray-600 dark:text-gray-400">Choose a category to report an issue</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {categories.map((category) => {
-              const Icon = category.icon;
-              return (
-                <div key={category.name} className="card hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-green-500">
-                  <div className="card-content">
-                    <div className={`${category.bgColor} w-16 h-16 rounded-lg flex items-center justify-center mb-4`}>
-                      <Icon className={`h-8 w-8 ${category.color}`} />
+            {}
+            <section className="py-24 bg-white dark:bg-gray-900">
+                <MyContainer>
+                    <div className="flex flex-col lg:flex-row items-end justify-between gap-8 mb-20">
+                        <div>
+                            <h2 className="text-4xl lg:text-5xl font-black text-slate-800 dark:text-white tracking-tight mb-4 text-center sm:text-left">Recent Incidents</h2>
+                            <p className="text-slate-500 font-medium text-lg text-center sm:text-left">Latest environmental reports from your community.</p>
+                        </div>
+                        <Link to="/all-issues" className="text-emerald-600 font-black uppercase text-xs tracking-widest hover:mr-2 transition-all flex items-center gap-2 group">
+                            View all issues <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                        </Link>
                     </div>
-                    <h3 className="mb-2 text-gray-900 dark:text-white">{category.name}</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{category.description}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                        {recentIssues.slice(0, 6).map(issue => (
+                            <IssueCard key={issue._id} issue={issue} />
+                        ))}
+                    </div>
+                </MyContainer>
+            </section>
         </div>
-      </section>
-
-
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl mb-4 text-gray-900 dark:text-white">Recent Complaints</h2>
-            <p className="text-gray-600 dark:text-gray-400">Latest issues reported by the community</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {recentIssues.map(issue => (
-            <IssueCard 
-              key={issue._id || issue.id} 
-              issue={issue} 
-              onUpdate={() => window.location.reload()}
-            />
-          ))}
-        </div>
-          <div className="text-center mt-8">
-            <Link to="/issues">
-              <button className="btn btn-lg btn-outline">
-                View All Issues
-              </button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-
-      <section className="py-16 bg-gray-50 dark:bg-gray-800">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl mb-4 text-gray-900 dark:text-white">Join Our Volunteer Program</h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
-            Be part of the solution! Join our cleanup drives and community initiatives to make a real difference in your neighborhood.
-          </p>
-          <Link to="/register">
-            <button className="btn btn-lg btn-primary">
-              Get Started Today
-            </button>
-          </Link>
-        </div>
-      </section>
-
-    </div>
-  )
-}
-
-export default Home
+    );
+};
+export default Home;

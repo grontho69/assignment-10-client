@@ -1001,3 +1001,41 @@
 .recharts-tooltip-cursor {
   stroke: #f1f5f9;
 }
+
+.footer-bg-gradient {
+  background: linear-gradient(to bottom, transparent, rgba(16, 185, 129, 0.05));
+}
+
+.dark .footer-bg-gradient {
+  background: linear-gradient(to bottom, transparent, rgba(16, 185, 129, 0.02));
+}
+
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass-morphism {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(to right, #10b981, #3b82f6);
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+

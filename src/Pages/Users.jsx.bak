@@ -1,0 +1,59 @@
+import React, { useEffect, useState } from "react";
+import DashboardLayout from "../features/dashboard/components/DashboardLayout";
+import api from "../services/api";
+import { Search } from "lucide-react";
+import { toast } from "react-toastify";
+
+const Users = () => {
+  const [users, setUsers] = useState([]);
+  const [search, setSearch] = useState("");
+  const fetchUsers = async () => {
+    try {
+      const res = await api.get("/users");
+      setUsers(res.data);
+    } catch (e) { toast.error("Access Forbidden"); }
+  };
+  useEffect(() => { fetchUsers(); }, []);
+
+  const handleUpdateRole = async (id, role) => {
+    try {
+      await api.patch(`/users/${id}`, { role });
+      toast.success("Identity Updated");
+      fetchUsers();
+    } catch (e) { toast.error("Revision Failed"); }
+  };
+
+  const filtered = users.filter(u => u.name?.toLowerCase().includes(search.toLowerCase()) || u.email?.toLowerCase().includes(search.toLowerCase()));
+
+  return (
+    <DashboardLayout>
+       <header className="mb-12">
+            <h1 className="text-4xl font-black text-slate-800 dark:text-white">Citizen Registry</h1>
+        </header>
+        <div className="bg-white dark:bg-gray-900 rounded-[3rem] p-10 shadow-sm">
+            <input 
+                className="w-full h-16 bg-slate-50 dark:bg-gray-800 rounded-2xl pl-16 pr-6 font-bold outline-none" 
+                placeholder="Search citizens..." 
+                value={search} onChange={(e) => setSearch(e.target.value)} 
+            />
+            <table className="table w-full">
+                <tbody>
+                    {filtered.map(u => (
+                        <tr key={u._id}>
+                            <td>{u.name}</td>
+                            <td>{u.email}</td>
+                            <td>
+                                <select value={u.role || 'user'} onChange={(e) => handleUpdateRole(u._id, e.target.value)}>
+                                    <option value="user">USER</option>
+                                    <option value="admin">ADMIN</option>
+                                </select>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    </DashboardLayout>
+  );
+};
+export default Users;

@@ -53,25 +53,22 @@ export const AuthProvider = ({ children }) => {
     const unSubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         try {
-          const token = await currentUser.getIdToken();
-          localStorage.setItem('token', token);
-          
-          const res = await api.get('/users/profile');
+          const res = await api.post('/users', {
+            name: currentUser.displayName,
+            email: currentUser.email,
+            photoURL: currentUser.photoURL,
+          });
           const backendUser = res.data;
           setUser({
             ...currentUser,
-            name: backendUser.name || currentUser.displayName,
-            photoURL: backendUser.photoURL || currentUser.photoURL,
             role: backendUser.role || 'user',
-            dbId: backendUser._id
+            id: backendUser._id
           });
         } catch (e) {
-          console.error("User sync error:", e);
           setUser({ ...currentUser, role: 'user' });
         }
       } else {
         setUser(null);
-        localStorage.removeItem('token');
       }
       setLoading(false);
     });

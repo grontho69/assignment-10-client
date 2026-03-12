@@ -1,16 +1,15 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, Link, useLocation } from "react-router";
-import { Menu, X, LogOut, Leaf, Sun, Moon, LayoutDashboard, Bell, Trash2 } from "lucide-react";
+import { Menu, X, LogOut, Leaf, Sun, Moon, LayoutDashboard, Bell, History, HelpCircle, PlusCircle, Settings, FileText } from "lucide-react";
 import MyContainer from "./MyContainer";
-import { AuthContext } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { useNotifications } from "../context/NotificationContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Navbar = () => {
   const location = useLocation();
-  const isActive = (path) => location.pathname === path;
-  const { user, logoutUser } = useContext(AuthContext);
+  const { user, logoutUser } = useAuth();
   const { notifications, unreadCount, markAsRead, clearNotifications } = useNotifications();
   const [open, setOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -43,33 +42,53 @@ const Navbar = () => {
     ? [
         { name: "Home", path: "/" },
         { name: "All Issues", path: "/all-issues" },
+        { name: "Add Issues", path: "/add-issue" },
+        { name: "My Issues", path: "/my-issues" },
+        { name: "My Contribution", path: "/my-contribution" },
         { name: "Dashboard", path: "/dashboard" },
       ]
     : [
         { name: "Home", path: "/" },
-        { name: "Issues", path: "/issues" },
+        { name: "Issues", path: "/all-issues" },
+        { name: "Login", path: "/login" },
+        { name: "Register", path: "/register" },
       ];
+
+  useEffect(() => {
+    const routeTitles = {
+        "/": "Home | EcoReport",
+        "/all-issues": "All Issues | EcoReport",
+        "/add-issue": "Report Issue | EcoReport",
+        "/my-issues": "My Issues | EcoReport",
+        "/my-contribution": "My Contributions | EcoReport",
+        "/dashboard": "Dashboard | EcoReport",
+        "/login": "Login | EcoReport",
+        "/register": "Register | EcoReport"
+    };
+    let title = routeTitles[location.pathname] || "EcoReport";
+    if (location.pathname.startsWith('/issue-details')) title = "Issue Details | EcoReport";
+    document.title = title;
+  }, [location]);
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-white/80 dark:bg-gray-900/80 backdrop-blur-md transition-colors">
       <MyContainer>
         <div className="flex items-center justify-between h-16 text-gray-800 dark:text-gray-100">
           <Link to="/" className="flex items-center gap-2 group">
-            <Leaf className="h-8 w-8 text-green-600 group-hover:rotate-12 transition-transform" />
+            <Leaf className="h-8 w-8 text-emerald-600 group-hover:rotate-12 transition-transform" />
             <span className="font-bold text-xl tracking-tight">EcoReport</span>
           </Link>
 
-          {}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-2">
             <div className="flex items-center gap-1">
               {navLinks.map((item) => (
                 <NavLink
                   key={item.path}
                   to={item.path}
-                  className={({ isActive }) => `px-3 py-2 text-sm font-medium rounded-lg transition-all ${
+                  className={({ isActive }) => `px-3 py-2 text-xs font-bold rounded-xl transition-all ${
                     isActive
-                      ? "text-green-600 bg-green-50 dark:bg-green-900/20"
-                      : "opacity-70 hover:opacity-100 hover:bg-gray-50 dark:hover:bg-gray-800"
+                      ? "text-emerald-00 bg-emerald-50 dark:bg-emerald-900/20"
+                      : "opacity-60 hover:opacity-100 hover:bg-gray-50 dark:hover:bg-gray-800"
                   }`}
                 >
                   {item.name}
@@ -77,13 +96,12 @@ const Navbar = () => {
               ))}
             </div>
 
-            <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-1"></div>
+            <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-2"></div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <button 
                 onClick={handleTheme} 
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
-                title="Toggle Theme"
               >
                 <Sun className="h-5 w-5 block dark:hidden" />
                 <Moon className="h-5 w-5 hidden dark:block" />
@@ -92,40 +110,45 @@ const Navbar = () => {
               {user && (
                 <div className="relative">
                   <button 
-                    onClick={() => { setNotifOpen(!notifOpen); setProfileOpen(false); markAsRead(); }}
+                    onClick={() => { setNotifOpen(!notifOpen); setProfileOpen(false); }}
                     className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors relative"
                   >
                     <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
-                      <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-gray-900"></span>
+                      <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-gray-900 animate-pulse"></span>
                     )}
                   </button>
 
                   <AnimatePresence>
                     {notifOpen && (
                       <motion.div 
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        className="absolute right-0 mt-3 w-80 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-2xl shadow-xl z-50 overflow-hidden"
+                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                        className="absolute right-0 mt-3 w-80 bg-white dark:bg-gray-900 rounded-[2rem] shadow-2xl border dark:border-gray-800 overflow-hidden z-[60]"
                       >
-                        <div className="px-4 py-3 border-b dark:border-gray-700 flex justify-between items-center">
-                          <h4 className="font-bold text-sm">Notifications</h4>
-                          <button onClick={clearNotifications} className="text-[10px] uppercase font-bold text-gray-400 hover:text-red-500">Clear All</button>
+                        <div className="p-6 border-b dark:border-gray-800 flex justify-between items-center bg-slate-50/50 dark:bg-gray-800/30">
+                          <h3 className="font-black text-xs uppercase tracking-widest text-slate-400">Notifications</h3>
+                          <button onClick={() => clearNotifications()} className="text-[10px] font-bold text-emerald-500 hover:text-emerald-600">Clear All</button>
                         </div>
-                        <div className="max-h-96 overflow-y-auto">
-                          {notifications.length > 0 ? (
-                            notifications.map((n, i) => (
-                              <div key={i} className="px-4 py-3 border-b dark:border-gray-700 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                                <p className="text-sm text-gray-800 dark:text-gray-200">{n.message}</p>
-                                <p className="text-[10px] text-gray-400 mt-1">{new Date(n.timestamp || Date.now()).toLocaleTimeString()}</p>
+                        <div className="max-h-[400px] overflow-y-auto">
+                          {notifications.length === 0 ? (
+                            <div className="p-10 text-center">
+                              <Bell className="mx-auto text-slate-200 mb-3" size={32} />
+                              <p className="text-xs text-slate-400 font-medium">All caught up!</p>
+                            </div>
+                          ) : (
+                            notifications.map((n) => (
+                              <div key={n.id} className={`p-6 border-b dark:border-gray-800 last:border-0 hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer ${!n.read ? 'bg-emerald-50/20' : ''}`} onClick={() => markAsRead(n.id)}>
+                                <div className="flex gap-4">
+                                  <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${!n.read ? 'bg-emerald-500' : 'bg-transparent'}`}></div>
+                                  <div>
+                                    <p className="text-xs font-bold text-slate-800 dark:text-white leading-relaxed">{n.text}</p>
+                                    <p className="text-[10px] text-slate-400 mt-2 font-medium">{new Date(n.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                  </div>
+                                </div>
                               </div>
                             ))
-                          ) : (
-                            <div className="p-8 text-center text-gray-400">
-                              <Bell className="h-8 w-8 mx-auto mb-2 opacity-20" />
-                              <p className="text-sm">No new notifications</p>
-                            </div>
                           )}
                         </div>
                       </motion.div>
@@ -134,125 +157,130 @@ const Navbar = () => {
                 </div>
               )}
 
-              {!user ? (
-                <div className="flex items-center gap-4 ml-2">
-                  <Link to="/login" className="text-sm font-bold text-gray-600 dark:text-gray-400 hover:text-green-600 transition-colors">Login</Link>
-                  <Link to="/register" className="px-5 py-2 rounded-xl bg-green-600 text-white text-sm font-bold shadow-lg shadow-green-200 dark:shadow-none hover:bg-green-700 hover:-translate-y-0.5 transition-all">
-                    Register
-                  </Link>
-                </div>
-              ) : (
-                <div className="relative">
-                  <div 
-                    className="flex items-center gap-3 cursor-pointer p-1 pr-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              {user ? (
+                <div className="relative ml-2">
+                   <div 
+                    className="flex items-center gap-3 cursor-pointer p-1 pr-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-gray-800 transition-colors"
                     onClick={() => { setProfileOpen(!profileOpen); setNotifOpen(false); }}
                   >
                     <img
                       src={user.photoURL || `https://ui-avatars.com/api/?name=${user.name}`}
                       alt="profile"
-                      className="h-8 w-8 rounded-lg border-2 border-green-500 shadow-sm"
+                      className="h-9 w-9 rounded-xl border-2 border-emerald-500 shadow-sm"
                     />
                     <div className="hidden lg:block text-left">
-                      <p className="text-xs font-bold leading-tight truncate max-w-[100px]">{user.name}</p>
-                      <p className="text-[10px] text-gray-400 leading-tight uppercase font-black">{user.role}</p>
+                      <p className="text-xs font-black leading-tight truncate max-w-[100px]">{user.name}</p>
+                      <p className="text-[9px] text-emerald-600 leading-tight uppercase font-black">{user.role}</p>
                     </div>
                   </div>
 
                   <AnimatePresence>
                     {profileOpen && (
                       <motion.div 
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        className="absolute right-0 mt-3 w-56 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-2xl shadow-xl z-50 overflow-hidden"
+                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                        className="absolute right-0 mt-3 w-64 bg-white dark:bg-gray-900 rounded-[2rem] shadow-2xl border dark:border-gray-800 overflow-hidden z-[60]"
                       >
-                        <div className="px-4 py-4 bg-gray-50 dark:bg-gray-800/50 border-b dark:border-gray-700">
-                          <p className="text-sm font-bold truncate">{user.name}</p>
-                          <p className="text-xs text-gray-500 truncate">{user.email}</p>
-                        </div>
-                        <div className="p-2">
-                          <Link 
-                            to="/dashboard" 
-                            className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                            onClick={() => setProfileOpen(false)}
-                          >
-                            <LayoutDashboard size={16} className="text-gray-400" /> My Dashboard
-                          </Link>
-                          <button
-                            onClick={logout}
-                            className="flex items-center gap-3 px-3 py-2.5 w-full text-red-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors text-sm font-bold rounded-xl"
-                          >
-                            <LogOut size={16} /> Logout
-                          </button>
-                        </div>
+                         <div className="p-6 bg-slate-50/50 dark:bg-gray-800/30 border-b dark:border-gray-800">
+                           <p className="font-black text-slate-800 dark:text-white truncate">{user.name}</p>
+                           <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">{user.role}</p>
+                         </div>
+                         <div className="p-2">
+                            <Link to="/reports" className="flex items-center gap-3 p-4 hover:bg-slate-50 dark:hover:bg-gray-800 rounded-xl transition-all group" onClick={() => setProfileOpen(false)}>
+                              <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
+                                <FileText size={16} />
+                              </div>
+                              <span className="text-xs font-black text-slate-700 dark:text-gray-300 uppercase tracking-widest">Dashboard</span>
+                            </Link>
+                            <Link to="/settings" className="flex items-center gap-3 p-4 hover:bg-slate-50 dark:hover:bg-gray-800 rounded-xl transition-all group" onClick={() => setProfileOpen(false)}>
+                              <div className="w-8 h-8 rounded-lg bg-slate-50 dark:bg-gray-800 flex items-center justify-center text-slate-400 group-hover:scale-110 transition-transform">
+                                <Settings size={16} />
+                              </div>
+                              <span className="text-xs font-black text-slate-700 dark:text-gray-300 uppercase tracking-widest">Settings</span>
+                            </Link>
+                            <button 
+                              onClick={() => { logout(); setProfileOpen(false); }}
+                              className="w-full flex items-center gap-3 p-4 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-xl transition-all group text-left"
+                            >
+                              <div className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center text-rose-500 group-hover:scale-110 transition-transform">
+                                <LogOut size={16} />
+                              </div>
+                              <span className="text-xs font-black text-slate-700 dark:text-gray-300 uppercase tracking-widest">Sign Out</span>
+                            </button>
+                         </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3 ml-2">
+                   <Link to="/login" className="text-xs font-black uppercase text-slate-500 hover:text-emerald-600 px-2 transition-colors">Login</Link>
+                   <Link to="/register" className="px-5 py-2.5 rounded-2xl bg-slate-900 dark:bg-emerald-600 text-white text-xs font-black shadow-lg shadow-slate-200 dark:shadow-none hover:bg-black transition-all">
+                     Register
+                   </Link>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="md:hidden flex items-center gap-3">
-            <button onClick={handleTheme} className="p-2">
-              <Sun className="h-5 w-5 block dark:hidden" />
-              <Moon className="h-5 w-5 hidden dark:block" />
-            </button>
-            <button onClick={() => setOpen(!open)} className="p-2 bg-gray-100 dark:bg-gray-800 rounded-xl">
-              {open ? <X size={20} /> : <Menu size={20} />}
-            </button>
+            {/* Mobile Toggle */}
+            <div className="flex md:hidden items-center gap-2">
+              <button 
+                onClick={handleTheme} 
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
+              >
+                <Sun className="h-5 w-5 block dark:hidden" />
+                <Moon className="h-5 w-5 hidden dark:block" />
+              </button>
+              <button
+                onClick={() => { setOpen(!open); setNotifOpen(false); setProfileOpen(false); }}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
+              >
+                {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
+            </div>
           </div>
-        </div>
 
-        {}
-        <AnimatePresence>
-          {open && (
-            <motion.div 
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="md:hidden mt-2 overflow-hidden border-t dark:border-gray-700"
-            >
-              <div className="flex flex-col gap-2 py-6 px-2">
-                {navLinks.map((item) => (
-                  <NavLink
-                    key={item.path}
-                    to={item.path}
-                    onClick={() => setOpen(false)}
-                    className={({ isActive }) => `px-4 py-3 rounded-xl text-lg font-bold transition-colors ${
-                      isActive ? "bg-green-50 text-green-600 dark:bg-green-900/20" : ""
-                    }`}
-                  >
-                    {item.name}
-                  </NavLink>
-                ))}
-
-                {!user ? (
-                  <div className="grid grid-cols-2 gap-4 mt-6">
-                    <Link to="/login" onClick={() => setOpen(false)} className="btn btn-outline border-gray-200 dark:border-gray-700">Login</Link>
-                    <Link to="/register" onClick={() => setOpen(false)} className="btn btn-primary bg-green-600 border-none shadow-lg shadow-green-200">Register</Link>
-                  </div>
-                ) : (
-                  <div className="mt-8 pt-8 border-t dark:border-gray-700">
-                    <div className="flex items-center gap-4 px-2 mb-6">
-                      <img src={user.photoURL} alt="" className="w-12 h-12 rounded-xl border-2 border-green-500" />
-                      <div>
-                          <p className="font-extrabold">{user.name}</p>
-                          <p className="text-xs text-gray-500 font-medium">{user.email}</p>
-                      </div>
-                    </div>
-                    <button onClick={logout} className="flex items-center gap-3 px-4 py-3 w-full text-red-500 font-extrabold bg-rose-50 dark:bg-rose-900/10 rounded-xl transition-colors">
-                      <LogOut size={20} /> Logout
+          {/* Mobile menu */}
+          <AnimatePresence>
+            {open && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="md:hidden overflow-hidden border-t dark:border-gray-800 bg-white dark:bg-gray-950"
+              >
+                <div className="flex flex-col gap-1 p-4">
+                  {navLinks.map((item) => (
+                    <NavLink
+                      key={item.path}
+                      to={item.path}
+                      onClick={() => setOpen(false)}
+                      className={({ isActive }) => `px-4 py-3 text-sm font-bold rounded-xl transition-all ${
+                        isActive
+                          ? "text-emerald-00 bg-emerald-50 dark:bg-emerald-900/20"
+                          : "opacity-60 hover:opacity-100 hover:bg-gray-50 dark:hover:bg-gray-800"
+                      }`}
+                    >
+                      {item.name}
+                    </NavLink>
+                  ))}
+                  {user && (
+                    <button
+                      onClick={() => { logout(); setOpen(false); }}
+                      className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-rose-500 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-all"
+                    >
+                      <LogOut size={18} /> Logout
                     </button>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </MyContainer>
-    </nav>
-  );
-};
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </MyContainer>
+      </nav>
+    );
+  };
 
 export default Navbar;

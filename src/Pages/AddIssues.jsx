@@ -1,132 +1,55 @@
-import React, { useContext } from 'react'
-import { AuthContext } from '../context/AuthContext'
-import { toast } from 'react-toastify'
-import { useNavigate } from 'react-router'
-import { issueService } from '../services/issue.service'
+import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-toastify';
+import { issueService } from '../services/issue.service';
+import { useNavigate } from 'react-router';
 
 const AddIssues = () => {
-const {user} = useContext(AuthContext)
-const navigate = useNavigate();
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    setLoading(true);
+    const form = e.target;
     const issueData = {
-      title: e.target.title.value,
-      category: e.target.category.value,
-      location: e.target.location.value,
-      description: e.target.description.value,
-      image: e.target.image.value,
-      amount: Number(e.target.amount.value),
-      date: new Date(),
-      email: user.email,
-      status: 'Pending'
-    }
+        title: form.title.value,
+        image: form.image.value,
+        location: form.location.value,
+        category: form.category.value,
+        amount: Number(form.amount.value),
+        description: form.description.value,
+        email: user.email,
+        userName: user.name,
+        userPhoto: user.photoURL,
+        status: 'Pending'
+    };
 
     try {
-      await issueService.createIssue(issueData);
-      toast.success('Issue reported successfully');
-      navigate('/my-issues');
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to submit issue');
-    }
-}
-
+        await issueService.createIssue(issueData);
+        toast.success("Issue reported successfully");
+        navigate('/my-issues');
+    } catch (err) { toast.error("Submission failed"); } finally { setLoading(false); }
+  };
 
   return (
-    <div>
-       <div className="container mx-auto px-4 py-8 max-w-2xl">
-      <div className="card">
-        <div className="card-header">
-          <h2 className="card-title">Report a New Issue</h2>
-        </div>
-        <div className="card-content">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label htmlFor="title" className="label">Issue Title *</label>
-              <input
-                id="title"
-                name="title"
-                className="input"
-                placeholder="Enter issue title"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="category" className="label">Category *</label>
-              <select
-                id="category"
-                name="category"
-                className="select"
-              >
-                <option value="">Select category</option>
-                <option value="Garbage">Garbage</option>
-                <option value="Illegal Construction">Illegal Construction</option>
-                <option value="Broken Public Property">Broken Public Property</option>
-                <option value="Road Damage">Road Damage</option>
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="location" className="label">Location *</label>
-              <input
-                id="location"
-                name="location"
-                className="input"
-                placeholder="Enter location"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="description" className="label">Description *</label>
-              <textarea
-                id="description"
-                name="description"
-                className="textarea"
-                placeholder="Describe the issue in detail"
-                rows={4}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="image" className="label">Image URL *</label>
-              <input
-                id="image"
-                name="image"
-                type="url"
-                className="input"
-                placeholder="Enter image URL"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="amount" className="label">Suggested Fix Budget ($) *</label>
-              <input
-                id="amount"
-                name="amount"
-                type="number"
-                min="0"
-                step="1"
-                className="input"
-                placeholder="Enter estimated budget"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="label">Email (Read Only)</label>
-                <input className="input"
-                  value={user?.email || ''}
-                disabled/>
-            </div>
-
-            <button type="submit" className="btn btn-primary w-full" >
-                'Submit Issue'
-            </button>
-          </form>
-        </div>
-      </div>
+    <div className="container mx-auto px-4 py-20 max-w-4xl text-slate-800 dark:text-white">
+      <h1 className="text-5xl font-black mb-12">Report Concern</h1>
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white dark:bg-gray-900 p-12 rounded-[3.5rem] shadow-sm">
+        <input name="title" required placeholder="Issue Title" className="input bg-slate-50 dark:bg-gray-800 p-4 rounded-xl" />
+        <input name="image" required placeholder="Photo URL" className="input bg-slate-50 dark:bg-gray-800 p-4 rounded-xl" />
+        <input name="location" required placeholder="Location" className="input bg-slate-50 dark:bg-gray-800 p-4 rounded-xl" />
+        <select name="category" className="input bg-slate-50 dark:bg-gray-800 p-4 rounded-xl">
+            <option>Waste Management</option>
+            <option>Broken Infrastructure</option>
+            <option>Waterlogging</option>
+        </select>
+        <input name="amount" type="number" required min="1" placeholder="Estimated Budget ($)" className="input bg-slate-50 dark:bg-gray-800 p-4 rounded-xl" />
+        <textarea name="description" required placeholder="Describe the situation..." className="md:col-span-2 bg-slate-50 dark:bg-gray-800 p-4 rounded-xl h-32"></textarea>
+        <button disabled={loading} className="md:col-span-2 bg-emerald-500 text-white font-black p-5 rounded-[2rem]">Submit Report</button>
+      </form>
     </div>
-    </div>
-  )
-}
-
-export default AddIssues
+  );
+};
+export default AddIssues;

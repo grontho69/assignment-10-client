@@ -1,187 +1,112 @@
-import React, { useEffect, useState } from 'react';
-import { userService } from '../services/userService';
-import { toast } from 'react-toastify';
-import { User, Shield, Mail, Calendar, Edit3, Save, X, Trash2, Search } from 'lucide-react';
-import { RotateLoader } from 'react-spinners';
-import Swal from 'sweetalert2';
+import React, { useEffect, useState } from "react";
+import DashboardLayout from "../features/dashboard/components/DashboardLayout";
+import api from "../services/api";
+import { Search, Shield, User, Mail, ShieldAlert } from "lucide-react";
+import { toast } from "react-toastify";
+import { motion } from "framer-motion";
 
 const Users = () => {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [search, setSearch] = useState('');
-    const [editingId, setEditingId] = useState(null);
-    const [newRole, setNewRole] = useState('');
+  const [users, setUsers] = useState([]);
+  const [search, setSearch] = useState("");
+  const fetchUsers = async () => {
+    try {
+      const res = await api.get("/users");
+      setUsers(res.data);
+    } catch (e) { toast.error("Access Forbidden"); }
+  };
+  useEffect(() => { fetchUsers(); }, []);
 
-    useEffect(() => {
-        fetchUsers();
-    }, [search]);
+  const handleUpdateRole = async (id, role) => {
+    try {
+      await api.patch(`/users/${id}/role`, { role });
+      toast.success("Identity Updated");
+      fetchUsers();
+    } catch (e) { toast.error("Revision Failed"); }
+  };
 
-    const fetchUsers = async () => {
-        try {
-            const data = await userService.getAllUsers(search);
-            setUsers(data);
-        } catch (error) {
-            toast.error("Failed to load users");
-        } finally {
-            setLoading(false);
-        }
-    };
+  const filtered = users.filter(u => u.name?.toLowerCase().includes(search.toLowerCase()) || u.email?.toLowerCase().includes(search.toLowerCase()));
 
-    const handleRoleUpdate = async (id) => {
-        try {
-            const result = await userService.updateUserRole(id, newRole);
-            if (result.success) {
-                toast.success("User role updated");
-                setEditingId(null);
-                fetchUsers();
-            }
-        } catch (error) {
-            toast.error("Update failed");
-        }
-    };
-
-    const handleDelete = async (id) => {
-        Swal.fire({
-            title: 'Delete user?',
-            text: "This action cannot be undone.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#ef4444',
-            confirmButtonText: 'Yes, delete'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                try {
-                    await userService.deleteUser(id);
-                    toast.success("User deleted");
-                    fetchUsers();
-                } catch (error) {
-                    toast.error("Delete failed");
-                }
-            }
-        });
-    };
-
-    if (loading && !search) {
-        return (
-            <div className='h-[80vh] flex items-center justify-center'>
-                <RotateLoader color="#54b355" size={20} />
+  return (
+    <DashboardLayout>
+       <header className="mb-12 flex items-center justify-between">
+            <div>
+                <motion.h1 initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="text-4xl font-black text-slate-800 dark:text-white tracking-tight">Citizen <span className="text-emerald-500">Registry</span></motion.h1>
+                <p className="text-slate-500 dark:text-gray-400 mt-2 font-medium">Verify and authorize community members.</p>
             </div>
-        );
-    }
+            <div className="bg-emerald-50 dark:bg-emerald-900/20 px-6 py-3 rounded-2xl flex items-center gap-3 border border-emerald-100 dark:border-emerald-800">
+                <Shield size={20} className="text-emerald-600" />
+                <span className="text-xs font-black text-emerald-600 uppercase tracking-widest">{users.length} Registered</span>
+            </div>
+        </header>
 
-    return (
-        <div className="container mx-auto px-4 py-8">
-            <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h2 className="text-3xl font-bold flex items-center gap-3">
-                        <User className="w-8 h-8 text-green-600" />
-                        Admin: User Management
-                    </h2>
-                    <p className="text-gray-500 mt-2">Manage roles and global system access.</p>
-                </div>
-                <div className="relative w-full md:w-96">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <div className="bg-white dark:bg-gray-900 rounded-[3.5rem] shadow-sm border border-slate-50 dark:border-gray-800 overflow-hidden">
+            <div className="p-10 border-b dark:border-gray-800">
+                <div className="relative group">
+                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors" size={24} />
                     <input 
-                        type="text" 
-                        placeholder="Search users..." 
-                        className="input pl-10 w-full"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        className="w-full h-18 bg-slate-50 dark:bg-gray-800 rounded-[2rem] pl-16 pr-8 font-bold outline-none ring-offset-bg focus:ring-2 focus:ring-emerald-500/20 transition-all text-lg" 
+                        placeholder="Search by name or email..." 
+                        value={search} onChange={(e) => setSearch(e.target.value)} 
                     />
                 </div>
-            </header>
-
-            <div className="card overflow-hidden">
-                <div className="table-container">
-                    <table className="table w-full">
-                        <thead className="bg-gray-50 dark:bg-gray-800">
-                            <tr>
-                                <th className="p-4">User</th>
-                                <th className="p-4 text-left">Role</th>
-                                <th className="p-4 text-left">Last login</th>
-                                <th className="p-4 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {users.map((u) => (
-                                <tr key={u._id} className="border-b dark:border-gray-700 hover:bg-slate-50 transition-colors">
-                                    <td className="p-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-200">
-                                                <img 
-                                                    src={u.photoURL || `https://ui-avatars.com/api/?name=${u.name}`} 
-                                                    alt="" 
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            </div>
-                                            <div>
-                                                <p className="font-bold">{u.name}</p>
-                                                <p className="text-xs text-gray-500">{u.email}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="p-4">
-                                        {editingId === u._id ? (
-                                            <select 
-                                                className="select select-sm select-bordered"
-                                                value={newRole}
-                                                onChange={(e) => setNewRole(e.target.value)}
-                                            >
-                                                <option value="user">user</option>
-                                                <option value="researcher">researcher</option>
-                                                <option value="organization">organization</option>
-                                                <option value="admin">admin</option>
-                                            </select>
-                                        ) : (
-                                            <span className={`badge ${
-                                                u.role === 'admin' ? 'badge-error' : 
-                                                u.role === 'organization' ? 'badge-primary' : 
-                                                u.role === 'researcher' ? 'badge-info' : 'badge-ghost'
-                                            } text-[10px] font-bold uppercase`}>
-                                                {u.role}
-                                            </span>
-                                        )}
-                                    </td>
-                                    <td className="p-4 text-sm text-gray-500">
-                                        {u.lastLogin ? new Date(u.lastLogin).toLocaleDateString() : 'N/A'}
-                                    </td>
-                                    <td className="p-4 text-right">
-                                        <div className="flex justify-end gap-2">
-                                            {editingId === u._id ? (
-                                                <>
-                                                    <button onClick={() => handleRoleUpdate(u._id)} className="btn btn-sm btn-success p-2">
-                                                        <Save className="w-4 h-4 text-white" />
-                                                    </button>
-                                                    <button onClick={() => setEditingId(null)} className="btn btn-sm btn-ghost p-2">
-                                                        <X className="w-4 h-4" />
-                                                    </button>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <button 
-                                                        onClick={() => { setEditingId(u._id); setNewRole(u.role); }}
-                                                        className="btn btn-sm btn-ghost p-2 text-slate-400 hover:text-green-600"
-                                                    >
-                                                        <Edit3 className="w-4 h-4" />
-                                                    </button>
-                                                    <button 
-                                                        onClick={() => handleDelete(u._id)}
-                                                        className="btn btn-sm btn-ghost p-2 text-slate-400 hover:text-rose-600"
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </button>
-                                                </>
-                                            )}
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
             </div>
+            
+            <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                    <thead>
+                        <tr className="bg-slate-50/50 dark:bg-gray-800/30">
+                            <th className="p-8 text-[10px] font-black uppercase tracking-widest text-slate-400">Identity</th>
+                            <th className="p-8 text-[10px] font-black uppercase tracking-widest text-slate-400">Access Level</th>
+                            <th className="p-8 text-[10px] font-black uppercase tracking-widest text-slate-400">Created At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filtered.map(u => (
+                            <tr key={u._id} className="border-b dark:border-gray-800 hover:bg-slate-50/30 dark:hover:bg-gray-800/30 transition-colors">
+                                <td className="p-8">
+                                    <div className="flex items-center gap-4">
+                                        <img src={u.photoURL || `https://ui-avatars.com/api/?name=${u.name}`} className="w-12 h-12 rounded-2xl object-cover shadow-sm" alt="" />
+                                        <div>
+                                            <p className="font-black text-slate-800 dark:text-white uppercase text-xs tracking-wider">{u.name}</p>
+                                            <p className="text-xs text-slate-400 font-medium flex items-center gap-2 mt-1"><Mail size={12} /> {u.email}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td className="p-8">
+                                    <div className="relative inline-block w-48">
+                                        <select 
+                                            value={u.role || 'user'} 
+                                            onChange={(e) => handleUpdateRole(u._id, e.target.value)}
+                                            className="w-full h-12 bg-slate-100 dark:bg-gray-800 border-none rounded-xl px-4 font-black text-[10px] uppercase tracking-widest text-emerald-600 appearance-none outline-none focus:ring-2 focus:ring-emerald-500/20"
+                                        >
+                                            <option value="user">Citizen (User)</option>
+                                            <option value="organization">Organization</option>
+                                            <option value="researcher">Researcher</option>
+                                            <option value="admin">System Admin</option>
+                                        </select>
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                                            <ShieldAlert size={14} className="text-emerald-600" />
+                                        </div>
+                                    </div>
+                                </td>
+                                <td className="p-8">
+                                    <span className="text-xs font-medium text-slate-400">
+                                        {u.createdAt ? new Date(u.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long' }) : 'Jan 2024'}
+                                    </span>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            {filtered.length === 0 && (
+                <div className="p-20 text-center">
+                    <User className="mx-auto text-slate-200 mb-4" size={48} />
+                    <p className="text-slate-400 font-medium">No citizens matching your search.</p>
+                </div>
+            )}
         </div>
-    );
+    </DashboardLayout>
+  );
 };
-
 export default Users;

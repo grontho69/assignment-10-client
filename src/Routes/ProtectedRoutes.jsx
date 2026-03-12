@@ -1,32 +1,43 @@
-import React, { useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
+import React from 'react';
 import { Navigate, useLocation } from 'react-router';
-import { RotateLoader } from 'react-spinners';
+import { useAuth } from '../context/AuthContext';
 
-const RoleRoute = ({ children, allowedRoles = [] }) => {
-    const { user, loading } = useContext(AuthContext);
+export const PrivateRoute = ({ children }) => {
+    const { user, loading } = useAuth();
     const location = useLocation();
 
-    if (loading) {
-        return (
-            <div className='h-[80vh] flex items-center justify-center'>
-                <RotateLoader color="#54b355" size={20} />
-            </div>
-        );
-    }
+    if (loading) return <div className="h-screen flex items-center justify-center font-black">Loading...</div>;
+    if (user) return children;
 
-    if (!user) {
-        return <Navigate to="/login" state={{ from: location }} replace />;
-    }
-
-    if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
-        return <Navigate to="/" replace />;
-    }
-
-    return children;
+    return <Navigate to="/login" state={{ from: location }} replace />;
 };
 
-export const PrivateRoute = ({ children }) => <RoleRoute>{children}</RoleRoute>;
-export const AdminRoute = ({ children }) => <RoleRoute allowedRoles={['admin']}>{children}</RoleRoute>;
-export const OrganizationRoute = ({ children }) => <RoleRoute allowedRoles={['admin', 'organization']}>{children}</RoleRoute>;
-export const ResearcherRoute = ({ children }) => <RoleRoute allowedRoles={['admin', 'researcher']}>{children}</RoleRoute>;
+export const AdminRoute = ({ children }) => {
+    const { user, loading } = useAuth();
+    const location = useLocation();
+
+    if (loading) return <div className="h-screen flex items-center justify-center font-black">Loading...</div>;
+    if (user && user.role === 'admin') return children;
+
+    return <Navigate to="/" state={{ from: location }} replace />;
+};
+
+export const OrganizationRoute = ({ children }) => {
+    const { user, loading } = useAuth();
+    const location = useLocation();
+
+    if (loading) return <div className="h-screen flex items-center justify-center">Loading...</div>;
+    if (user && (user.role === 'organization' || user.role === 'admin')) return children;
+
+    return <Navigate to="/" state={{ from: location }} replace />;
+};
+
+export const ResearcherRoute = ({ children }) => {
+    const { user, loading } = useAuth();
+    const location = useLocation();
+
+    if (loading) return <div className="h-screen flex items-center justify-center">Loading...</div>;
+    if (user && (user.role === 'researcher' || user.role === 'admin')) return children;
+
+    return <Navigate to="/" state={{ from: location }} replace />;
+};

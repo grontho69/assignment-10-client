@@ -1,17 +1,16 @@
-import React from 'react'
+import React from 'react';
 import { Outlet } from 'react-router';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import MyContainer from '../components/MyContainer';
 
-const MainLayout =()=> {
+const MainLayout = () => {
   return (
-    <div className="min-h-screen flex flex-col transition-colors duration-300">
-      <Navbar/>
+    <div className="flex flex-col min-h-screen bg-white dark:bg-gray-950 transition-colors">
+      <Navbar />
       <main className="flex-grow">
-        <Outlet/>
+        <Outlet />
       </main>
-      <Footer/>
+      <Footer />
     </div>
   );
 };
