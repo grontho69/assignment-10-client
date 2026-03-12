@@ -57,7 +57,7 @@ const Footer = () => {
         </div>
 
         <div className="pt-12 border-t dark:border-gray-800 flex flex-col md:flex-row justify-between items-center gap-6 text-slate-400 dark:text-gray-500 font-bold text-xs uppercase tracking-widest">
-           <p>© 2026 ECO-REPORT (ASSIGNMENT-10). ALL RIGHTS RESERVED.</p>
+           <p>© 2026 ECO-REPORT . ALL RIGHTS RESERVED.</p>
            <div className="flex gap-8">
              <a href="#" className="hover:text-emerald-500 transition-colors">Privacy</a>
              <a href="#" className="hover:text-emerald-500 transition-colors">Terms</a>
