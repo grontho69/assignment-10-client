@@ -27,6 +27,11 @@ const Reports = () => {
         fetchReports();
     }, []);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 8;
+    const totalPages = Math.ceil(reports.length / itemsPerPage);
+    const paginatedReports = reports.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
     const handleStatusUpdate = async (id, status) => {
         try {
             await issueService.updateIssue(id, { status });
@@ -60,26 +65,27 @@ const Reports = () => {
     };
 
     const handleExport = async () => {
-        window.open('http://localhost:3000/export/csv', '_blank');
+        const baseUrl = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
+        window.open(`${baseUrl}/export/csv`, '_blank');
     };
 
     return (
         <DashboardLayout>
             <div className="space-y-12">
-                <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                     <div>
                         <motion.h1 
                             initial={{ opacity: 0, y: -10 }} 
                             animate={{ opacity: 1, y: 0 }}
-                            className="text-4xl font-black text-slate-800 dark:text-white tracking-tight"
+                            className="text-3xl md:text-4xl font-black text-slate-800 dark:text-white tracking-tight"
                         >
                             Incident <span className="text-emerald-500">Reports</span>
                         </motion.h1>
-                        <p className="text-slate-500 dark:text-gray-400 mt-2 font-medium">Manage and monitor all community-reported environmental concerns.</p>
+                        <p className="text-slate-500 dark:text-gray-400 mt-2 font-medium">Manage and monitor community-reported environmental concerns.</p>
                     </div>
                     <button 
                         onClick={handleExport}
-                        className="h-14 px-8 bg-slate-900 dark:bg-emerald-600 rounded-2xl text-white font-black text-xs uppercase tracking-widest flex items-center gap-3 hover:scale-105 transition-all shadow-xl shadow-slate-200 dark:shadow-none"
+                        className="h-14 px-8 bg-slate-900 dark:bg-emerald-600 rounded-2xl text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 hover:scale-105 transition-all shadow-xl shadow-slate-200 dark:shadow-none sm:w-auto w-full"
                     >
                         <Download size={18} /> Export CSV
                     </button>
@@ -98,7 +104,7 @@ const Reports = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {reports.map((report) => (
+                                {paginatedReports.map((report) => (
                                     <tr key={report._id} className="border-b dark:border-gray-800 hover:bg-slate-50/30 dark:hover:bg-gray-800/30 transition-colors">
                                         <td className="p-8">
                                             <div className="flex items-center gap-4">
@@ -171,6 +177,29 @@ const Reports = () => {
                             <FileText className="mx-auto h-16 w-16 text-slate-200 mb-6" />
                             <h3 className="text-xl font-black text-slate-800 dark:text-white">No reports found</h3>
                             <p className="text-slate-400 font-medium">There are currently no incidents reported by citizens.</p>
+                        </div>
+                    )}
+
+                    {/* Pagination Controls */}
+                    {totalPages > 1 && (
+                        <div className="flex justify-center items-center gap-2 p-6 border-t dark:border-gray-800">
+                            <button 
+                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                disabled={currentPage === 1}
+                                className="px-4 py-2 bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-gray-300 rounded-lg text-xs font-black uppercase tracking-widest disabled:opacity-50 hover:bg-slate-200 dark:hover:bg-gray-700 transition-colors"
+                            >
+                                Prev
+                            </button>
+                            <span className="text-sm font-bold text-slate-500 dark:text-gray-400 mx-4">
+                                {currentPage} / {totalPages}
+                            </span>
+                            <button 
+                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                disabled={currentPage === totalPages}
+                                className="px-4 py-2 bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-gray-300 rounded-lg text-xs font-black uppercase tracking-widest disabled:opacity-50 hover:bg-slate-200 dark:hover:bg-gray-700 transition-colors"
+                            >
+                                Next
+                            </button>
                         </div>
                     )}
                 </div>

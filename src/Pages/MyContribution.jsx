@@ -13,8 +13,9 @@ const MyContributions = () => {
         const fetchContributions = async () => {
             if (user?.email) {
                 try {
-                    const data = await contributionService.getMyContributions();
-                    setMyContributions(data);
+                    const res = await contributionService.getMyContributions();
+                    const data = res?.result || res;
+                    setMyContributions(Array.isArray(data) ? data : []);
                 } catch (err) { console.error(err); } finally { setLoading(false); }
             }
         };

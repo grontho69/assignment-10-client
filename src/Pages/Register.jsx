@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
-import { Github, Mail, Lock, User, Image, ArrowRight, Loader2, Leaf, ShieldCheck } from "lucide-react";
+import { Github, Mail, Lock, User, Image, ArrowRight, Loader2, Leaf, ShieldCheck, Eye, EyeOff } from "lucide-react";
 
 const Register = () => {
   const { registerUser, updateUserNameAndPhoto, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -72,7 +73,7 @@ const Register = () => {
             </div>
 
             <div className="space-y-2 col-span-1 md:col-span-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Email Hub</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Email Address</label>
               <div className="relative">
                 <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input type="email" name="email" required className="w-full h-16 bg-white dark:bg-gray-900 border-none rounded-2xl pl-14 pr-6 font-bold shadow-sm outline-none" placeholder="warrior@eco-report.com" />
@@ -83,7 +84,14 @@ const Register = () => {
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Secure Access Key</label>
               <div className="relative">
                 <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <input type="password" name="password" required className="w-full h-16 bg-white dark:bg-gray-900 border-none rounded-2xl pl-14 pr-6 font-bold shadow-sm outline-none" placeholder="••••••••" />
+                <input type={showPassword ? "text" : "password"} name="password" required className="w-full h-16 bg-white dark:bg-gray-900 border-none rounded-2xl pl-14 pr-12 font-bold shadow-sm outline-none" placeholder="••••••••" />
+                <button 
+                  type="button" 
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-emerald-500 transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
             </div>
 

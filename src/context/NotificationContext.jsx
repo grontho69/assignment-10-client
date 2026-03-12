@@ -10,7 +10,8 @@ export const NotificationProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const newSocket = io(import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3000', {
+    const baseUrl = import.meta.env.VITE_API_URL || 'https://eco-report-server.vercel.app';
+    const newSocket = io(baseUrl, {
       transports: ['websocket', 'polling']
     });
     setSocket(newSocket);

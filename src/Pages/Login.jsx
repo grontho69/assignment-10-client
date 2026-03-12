@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router";
 import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
-import { Github, Mail, Lock, ArrowRight, Loader2, Leaf, ShieldCheck } from "lucide-react";
+import { Github, Mail, Lock, ArrowRight, Loader2, Leaf, ShieldCheck, Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
   const { loginUser, signInWithGoogle } = useAuth();
@@ -10,6 +10,7 @@ const Login = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -92,10 +93,17 @@ const Login = () => {
               <div className="relative">
                 <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input 
-                  type="password" name="password" required 
-                  className="w-full h-16 bg-white dark:bg-gray-900 border-none rounded-2xl pl-14 pr-6 font-bold shadow-sm focus:ring-2 focus:ring-emerald-500/20 dark:text-white outline-none" 
+                  type={showPassword ? "text" : "password"} name="password" required 
+                  className="w-full h-16 bg-white dark:bg-gray-900 border-none rounded-2xl pl-14 pr-12 font-bold shadow-sm focus:ring-2 focus:ring-emerald-500/20 dark:text-white outline-none" 
                   placeholder="••••••••"
                 />
+                <button 
+                  type="button" 
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-emerald-500 transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
               <div className="text-right">
                 <a href="#" className="text-xs font-black text-emerald-600 hover:text-emerald-700 transition-colors uppercase tracking-widest">Forgot Password?</a>

@@ -5,18 +5,32 @@ import { Search } from 'lucide-react';
 import MyContainer from '../components/MyContainer';
 
 const AllIssues = () => {
-    const issues = useLoaderData() || [];
+    const loaderData = useLoaderData();
+    const issues = Array.isArray(loaderData?.result) ? loaderData.result : (Array.isArray(loaderData) ? loaderData : []);
     const [search, setSearch] = useState("");
     const [category, setCategory] = useState("All");
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 6;
+
     const filtered = useMemo(() => {
         return issues.filter(i => {
+           const status = (i.status || 'Pending').toLowerCase();
+           const matchStatus = status === 'pending';
            const matchSearch = (i.title?.toLowerCase().includes(search.toLowerCase()) || 
                               i.location?.toLowerCase().includes(search.toLowerCase()));
            const matchCategory = category === "All" || i.category === category;
-           return matchSearch && matchCategory;
+           return matchStatus && matchSearch && matchCategory;
         });
     }, [issues, search, category]);
+
+    // Reset page to 1 if search or category changes
+    React.useEffect(() => {
+        setCurrentPage(1);
+    }, [search, category]);
+
+    const totalPages = Math.ceil(filtered.length / itemsPerPage);
+    const paginatedIssues = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     return (
         <div className="bg-slate-50 dark:bg-gray-950 min-h-screen py-12">
@@ -37,13 +51,36 @@ const AllIssues = () => {
                     </div>
                 </div>
 
-                {filtered.length > 0 ? (
+                {paginatedIssues.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                        {filtered.map(i => <IssueCard key={i._id} issue={i} />)}
+                        {paginatedIssues.map(i => <IssueCard key={i._id} issue={i} />)}
                     </div>
                 ) : (
                     <div className="text-center py-32 bg-white dark:bg-gray-900 rounded-[3rem] border border-slate-100 dark:border-gray-800 shadow-sm">
                         <h2 className="text-2xl font-black text-slate-800 dark:text-white">No results found</h2>
+                    </div>
+                )}
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                    <div className="flex justify-center items-center gap-2 mt-12">
+                        <button 
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                            className="px-6 py-3 bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-800 text-slate-600 dark:text-gray-300 rounded-xl text-xs font-black uppercase tracking-widest disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-gray-800 transition-colors shadow-sm"
+                        >
+                            Prev
+                        </button>
+                        <span className="text-sm font-bold text-slate-500 dark:text-gray-400 mx-4">
+                            {currentPage} / {totalPages}
+                        </span>
+                        <button 
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages}
+                            className="px-6 py-3 bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-800 text-slate-600 dark:text-gray-300 rounded-xl text-xs font-black uppercase tracking-widest disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-gray-800 transition-colors shadow-sm"
+                        >
+                            Next
+                        </button>
                     </div>
                 )}
             </MyContainer>

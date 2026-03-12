@@ -34,23 +34,23 @@ const Users = () => {
 
   return (
     <DashboardLayout>
-       <header className="mb-12 flex items-center justify-between">
+       <header className="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-                <motion.h1 initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="text-4xl font-black text-slate-800 dark:text-white tracking-tight">Citizen <span className="text-emerald-500">Registry</span></motion.h1>
+                <motion.h1 initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="text-3xl md:text-4xl font-black text-slate-800 dark:text-white tracking-tight">Citizen <span className="text-emerald-500">Registry</span></motion.h1>
                 <p className="text-slate-500 dark:text-gray-400 mt-2 font-medium">Verify and authorize community members.</p>
             </div>
-            <div className="bg-emerald-50 dark:bg-emerald-900/20 px-6 py-3 rounded-2xl flex items-center gap-3 border border-emerald-100 dark:border-emerald-800">
+            <div className="bg-emerald-50 dark:bg-emerald-900/20 px-6 py-3 rounded-2xl flex items-center gap-3 border border-emerald-100 dark:border-emerald-800 self-start md:self-auto">
                 <Shield size={20} className="text-emerald-600" />
                 <span className="text-xs font-black text-emerald-600 uppercase tracking-widest">{users.length} Registered</span>
             </div>
         </header>
 
-        <div className="bg-white dark:bg-gray-900 rounded-[3.5rem] shadow-sm border border-slate-50 dark:border-gray-800 overflow-hidden">
-            <div className="p-10 border-b dark:border-gray-800">
+        <div className="bg-white dark:bg-gray-900 rounded-[2.5rem] md:rounded-[3.5rem] shadow-sm border border-slate-50 dark:border-gray-800 overflow-hidden">
+            <div className="p-6 md:p-10 border-b dark:border-gray-800">
                 <div className="relative group">
-                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors" size={24} />
+                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors" size={20} />
                     <input 
-                        className="w-full h-18 bg-slate-50 dark:bg-gray-800 rounded-[2rem] pl-16 pr-8 font-bold outline-none ring-offset-bg focus:ring-2 focus:ring-emerald-500/20 transition-all text-lg" 
+                        className="w-full h-14 md:h-18 bg-slate-50 dark:bg-gray-800 rounded-2xl md:rounded-[2rem] pl-16 pr-8 font-bold outline-none ring-offset-bg focus:ring-2 focus:ring-emerald-500/20 transition-all text-base md:text-lg" 
                         placeholder="Search by name or email..." 
                         value={search} onChange={(e) => setSearch(e.target.value)} 
                     />

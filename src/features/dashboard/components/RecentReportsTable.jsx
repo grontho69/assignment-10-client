@@ -11,7 +11,8 @@ const RecentReportsTable = () => {
         const fetchRecent = async () => {
             try {
                 const data = await issueService.getRecentIssues();
-                setReports(data.slice(0, 5));
+                const pendingOnly = data.filter(i => (i.status || 'Pending').toLowerCase() === 'pending');
+                setReports(pendingOnly.slice(0, 5));
             } catch (err) {
                 console.error(err);
             } finally {

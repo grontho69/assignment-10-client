@@ -44,6 +44,7 @@ const Navbar = () => {
         { name: "Issues", path: "/all-issues" },
         { name: "Add Issue", path: "/add-issue" },
         { name: "My Issues", path: "/my-issues" },
+        { name: "My Contributions", path: "/my-contribution" },
         ...(user.role === 'admin' ? [{ name: "Admin Panel", path: "/dashboard" }] : []),
       ]
     : [
@@ -221,8 +222,8 @@ const Navbar = () => {
             </div>
           </div>
 
-            {/* Mobile Toggle */}
-            <div className="flex md:hidden items-center gap-2">
+            {/* Mobile Header Icons & Toggle */}
+            <div className="flex md:hidden items-center gap-1">
               <button 
                 onClick={handleTheme} 
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
@@ -230,51 +231,105 @@ const Navbar = () => {
                 <Sun className="h-5 w-5 block dark:hidden" />
                 <Moon className="h-5 w-5 hidden dark:block" />
               </button>
+
+              {user && (
+                <div className="relative">
+                  <button 
+                    onClick={() => { setNotifOpen(!notifOpen); setProfileOpen(false); setOpen(false); }}
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors relative"
+                  >
+                    <Bell className="h-5 w-5" />
+                    {unreadCount > 0 && (
+                      <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-gray-900"></span>
+                    )}
+                  </button>
+                </div>
+              )}
+
               <button
                 onClick={() => { setOpen(!open); setNotifOpen(false); setProfileOpen(false); }}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors ml-1"
               >
-                {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                {open ? <X className="h-6 w-6 text-emerald-600" /> : <Menu className="h-6 w-6" />}
               </button>
             </div>
           </div>
 
-          {/* Mobile menu */}
+          {/* Mobile menu drawer */}
           <AnimatePresence>
             {open && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="md:hidden overflow-hidden border-t dark:border-gray-800 bg-white dark:bg-gray-950"
-              >
-                <div className="flex flex-col gap-1 p-4">
-                  {navLinks.map((item) => (
-                    <NavLink
-                      key={item.path}
-                      to={item.path}
-                      onClick={() => setOpen(false)}
-                      className={({ isActive }) => `px-4 py-3 text-sm font-bold rounded-xl transition-all ${
-                        isActive
-                          ? "text-emerald-00 bg-emerald-50 dark:bg-emerald-900/20"
-                          : "opacity-60 hover:opacity-100 hover:bg-gray-50 dark:hover:bg-gray-800"
-                      }`}
-                    >
-                      {item.name}
-                    </NavLink>
-                  ))}
+              <>
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setOpen(false)}
+                  className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 md:hidden"
+                />
+                <motion.div
+                  initial={{ x: "100%" }}
+                  animate={{ x: 0 }}
+                  exit={{ x: "100%" }}
+                  transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                  className="fixed top-0 right-0 h-screen w-80 bg-white dark:bg-gray-950 z-50 p-8 shadow-2xl md:hidden flex flex-col"
+                >
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-2">
+                      <Leaf className="h-6 w-6 text-emerald-600" />
+                      <span className="font-bold text-lg dark:text-white">EcoReport</span>
+                    </div>
+                    <button onClick={() => setOpen(false)} className="p-2 bg-slate-50 dark:bg-gray-800 rounded-xl">
+                      <X size={20} />
+                    </button>
+                  </div>
+
                   {user && (
+                    <div className="mb-10 p-6 bg-emerald-50 dark:bg-emerald-950/20 rounded-[2rem] border border-emerald-100 dark:border-emerald-800/30">
+                      <div className="flex items-center gap-4">
+                        <img src={user.photoURL || `https://ui-avatars.com/api/?name=${user.name}`} className="w-12 h-12 rounded-2xl border-2 border-white dark:border-gray-900 shadow-sm" alt="" />
+                        <div>
+                          <p className="font-black text-slate-800 dark:text-white text-sm">{user.name}</p>
+                          <p className="text-[10px] text-emerald-600 font-black uppercase tracking-widest">{user.role}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex flex-col gap-2 flex-grow">
+                    {navLinks.map((item) => (
+                      <NavLink
+                        key={item.path}
+                        to={item.path}
+                        onClick={() => setOpen(false)}
+                        className={({ isActive }) => `px-6 py-4 text-xs font-black uppercase tracking-[0.2em] rounded-2xl transition-all ${
+                          isActive
+                            ? "text-emerald-00 bg-emerald-100 dark:bg-emerald-900/40"
+                            : "text-slate-500 hover:bg-slate-50 dark:hover:bg-gray-800"
+                        }`}
+                      >
+                        {item.name}
+                      </NavLink>
+                    ))}
+                  </div>
+
+                  {user ? (
                     <button
                       onClick={() => { logout(); setOpen(false); }}
-                      className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-rose-500 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-all"
+                      className="mt-auto flex items-center justify-center gap-3 w-full h-16 bg-rose-50 dark:bg-rose-950/20 text-rose-500 font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-rose-100 transition-all"
                     >
-                      <LogOut size={18} /> Logout
+                      <LogOut size={18} /> Sign Out
                     </button>
+                  ) : (
+                    <div className="mt-auto flex flex-col gap-3">
+                      <Link to="/login" onClick={() => setOpen(false)} className="h-14 w-full flex items-center justify-center font-black text-xs uppercase tracking-widest text-slate-500">Login</Link>
+                      <Link to="/register" onClick={() => setOpen(false)} className="h-16 w-full bg-slate-900 dark:bg-emerald-600 text-white flex items-center justify-center font-black text-xs uppercase tracking-widest rounded-2xl shadow-xl">Join Now</Link>
+                    </div>
                   )}
-                </div>
-              </motion.div>
+                </motion.div>
+              </>
             )}
           </AnimatePresence>
+
         </MyContainer>
       </nav>
     );
